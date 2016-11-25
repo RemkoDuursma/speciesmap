@@ -1,0 +1,7 @@
+- Worldclim comes in 1min resolution
+- Allow filtering of occurrences (will vary with GBIF and ALA)
+- How are subspecies treated?
+- worldclim_presence should pass arguments to underlying functions
+- clean argument in worldclim_rasters not implemented
+- revive old messaging system, and quiet argument
+- remove topath arguments and store in options()
