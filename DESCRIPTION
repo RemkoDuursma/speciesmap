@@ -3,7 +3,15 @@ Type: Package
 Title: Species Occurrences And Climate Observations
 Version: 0.1.0
 Author: Remko Duursma, Daisy Duursma
-Depends: ALA4R, rgbif, raster
+Depends:
+    ALA4R,
+    rgbif,
+    raster,
+    rgdal,
+    futile.logger
 Maintainer: Remko Duursma <remkoduursma@gmail.com>
-Description: Retrieve species occurrences from GBIF or ALA, and retrieve climate variables at the occurrences from WorldClim. Optionally rasterize occurrences at resolution of Worldclim to reduce sampling bias.
+Description: Retrieve species occurrences from GBIF or ALA, and retrieve climate
+    variables at the occurrences from WorldClim. Optionally rasterize occurrences at
+    resolution of Worldclim to reduce sampling bias.
 License: GPL-2
+RoxygenNote: 5.0.1

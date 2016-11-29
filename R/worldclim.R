@@ -14,15 +14,15 @@ get_worldclim_rasters <- function(topath, clean=FALSE){
   download_worldclim <- function(basen, topath){
 
     wc_fn_full <- file.path(topath, basen)
+    havewc <- file.exists(wc_fn_full)
 
-    if(!file.exists(wc_fn_full)){
-      message("Downloading WorldClim 10min layers ... ", appendLF=FALSE)
+    if(!havewc){
       download.file(file.path("http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur",basen),
-                    wc_fn_full, mode="wb")
-      message("done.")
+                    wc_fn_full, mode="wb", quiet=TRUE)
+      flog.info("WorldClim raster %s downloaded.", basen)
     }
 
-    u <- unzip(wc_fn_full, exdir=topath)
+    u <- suppressWarnings(unzip(wc_fn_full, exdir=topath, overwrite=FALSE))
 
     return(u)
   }
@@ -33,18 +33,12 @@ get_worldclim_rasters <- function(topath, clean=FALSE){
   # Read the rasters into a list
   tmean_raster <- list()
   prec_raster <- list()
-  #message("Reading Worldclim rasters ... ", appendLF = FALSE)
   for(i in 1:12){
     tmean_raster[[i]] <- raster(file.path(topath, sprintf("tmean/tmean_%s", i)))
     prec_raster[[i]] <- raster(file.path(topath, sprintf("prec/prec_%s", i)))
   }
-  #message("done.")
+  flog.info("WorldClim rasters read.")
 
-  # if(clean){
-  #   unlink(c(wc_fn_full,dir(file.path(topath,"tmean"),recursive=TRUE)))
-  #   unlink(c(wc_fn_full,dir(file.path(topath,"prec"),recursive=TRUE)))
-  # }
-  #
   return(list(tmean_raster=tmean_raster, prec_raster=prec_raster))
 }
 
@@ -78,6 +72,7 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
   }
   colnames(tmeanm) <- paste0("tmean_",1:12)
   colnames(precm) <- paste0("prec_",1:12)
+  flog.info("Extracted %s records from WorldClim rasters.", nrow(data))
 
   pxy <- cbind(data, as.data.frame(tmeanm), as.data.frame(precm))
   names(pxy)[2:3] <- c("longitude","latitude")

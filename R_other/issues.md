@@ -3,5 +3,8 @@
 - How are subspecies treated?
 - worldclim_presence should pass arguments to underlying functions
 - clean argument in worldclim_rasters not implemented
-- revive old messaging system, and quiet argument
+- revive old messaging system (or fancy new one?!), and quiet argument
 - remove topath arguments and store in options()
+- `get_worldclim_prectemp(data.frame(latitude=-35, longitude=150))` works but `get_worldclim_prectemp(list(latitude=-35, longitude=150))` does not
+- `get_worldclim_prectemp(data.frame(latitude=-35, longitude=150),                       return="summary")` requires `species` in the dataframe
+- `worldclim_presence` needs a `worldclim` argument

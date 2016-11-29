@@ -8,17 +8,20 @@
 #' @examples
 get_occurrences_gbif <- function(species){
 
-  spdat <- occ_search(scientificName=species,
+  time1 <- system.time(spdat <- occ_search(scientificName=species,
                       limit=50000,
                       fields =c('name','decimalLatitude','decimalLongitude'),
                       hasGeospatialIssue=FALSE,
-                      return="data")
+                      return="data"))
 
   # remove obs with no lats and longs
   spdat <- as.data.frame(na.omit(spdat))
 
   # rename
   names(spdat) <- c("species","longitude","latitude")
+
+  flog.info("GBIF returned %s records for %s in %s sec.",
+            nrow(spdat), species, round(time1[[3]],1))
 
   return(spdat)
 }
@@ -32,9 +35,10 @@ get_occurrences_gbif <- function(species){
 #' @author Remko Duursma
 #' @export
 #' @examples
+#' @importFrom ALA4R occurrences
 get_occurrences_ala <- function(species){
 
-  spdat <- occurrences(taxon=species, download_reason_id=7)
+  time1 <- system.time(spdat <- occurrences(taxon=species, download_reason_id=7))
 
   spdat <- subset(spdat$data,
                   !is.na(longitude),
@@ -42,6 +46,9 @@ get_occurrences_ala <- function(species){
 
   # Returns other species as well, for some reason
   spdat <- spdat[spdat$species == species,]
+
+  flog.info("ALA returned %s records for %s in %s sec.",
+            nrow(spdat), species, round(time1[[3]],1))
 
   return(spdat)
 }
@@ -81,6 +88,8 @@ rasterize_occurrences <- function(spdat){
   names(pxy) <- c("longitude","latitude")
 
   pxy <- cbind(data.frame(species=unique(spdat$species)), pxy)
+
+  flog.info("Rasterized %s occurrences into %s cells", nrow(spdat), nrow(pxy))
 
   return(pxy)
 }
