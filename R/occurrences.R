@@ -8,6 +8,8 @@
 #' @examples
 get_occurrences_gbif <- function(species){
 
+  species <- fix_caps(species)
+  
   time1 <- system.time(spdat <- occ_search(scientificName=species,
                       limit=50000,
                       fields =c('name','decimalLatitude','decimalLongitude'),
@@ -27,7 +29,7 @@ get_occurrences_gbif <- function(species){
 }
 
 
-#' Does
+#' Get species occurrences from the ALA
 #' @description
 #' @param
 #' @param
@@ -38,6 +40,8 @@ get_occurrences_gbif <- function(species){
 #' @importFrom ALA4R occurrences
 get_occurrences_ala <- function(species){
 
+  species <- fix_caps(species)
+  
   time1 <- system.time(spdat <- occurrences(taxon=species, download_reason_id=7))
 
   spdat <- subset(spdat$data,
@@ -62,10 +66,10 @@ get_occurrences_ala <- function(species){
 #' @author Remko Duursma
 #' @export
 #' @examples
-rasterize_occurrences <- function(spdat){
+rasterize_occurrences <- function(spdat, return_raster=FALSE){
 
   # make a new raster same size as worlclim but each gridcellhas ID number
-  gridcellID <- raster(nrow=900,ncol=2160,extent(c(-180,180,-60,90)))
+  gridcellID <- raster(nrow=900,ncol=2160,extent(c(-180,180,-60,90)), crs="+proj=longlat +datum=WGS84")
   gridcellID[] <- 1:1944000
 
   # get centerpoint of gridcells where species occur, 1 observation for each gridcell
@@ -82,6 +86,8 @@ rasterize_occurrences <- function(spdat){
   presence_raster <- raster::subs(gridcellID,
                                   as.data.frame(table(presence$gridID)))
 
+  if(return_raster)return(presence_raster)
+  
   # convert lat and longs of gridcells where species is present
   pxy <- as.data.frame(rasterToPoints(presence_raster))
   pxy <- pxy[,-3]
