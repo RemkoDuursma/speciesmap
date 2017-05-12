@@ -1,43 +1,18 @@
-#' Obtain species occurrences from GBIF
-#' @description Very simple wrapper to \code{\link{occ_search}}
-#' @param
-#' @param
-#' @param
+#' Get species occurrences from the ALA or GBIF
+#' @description A simple wrapper to \code{\link{occurrences}} from \CRANpkg{ALA4R}. Performs a search for a \code{species} (e.g. 'Eucalyptus globulus'), sets the \code{download_reason} to 'testing' (see \code{?ala_reasons}), and returns only the species, the longitude, and the latitude of all observations. 
+#' @param species The full scientific species name, quoted.
 #' @author Remko Duursma
 #' @export
+#' @seealso \code{\link{get_occurrences_gbif}}
 #' @examples
-get_occurrences_gbif <- function(species){
-
-  species <- fix_caps(species)
-  
-  time1 <- system.time(spdat <- occ_search(scientificName=species,
-                      limit=50000,
-                      fields =c('name','decimalLatitude','decimalLongitude'),
-                      hasGeospatialIssue=FALSE,
-                      return="data"))
-
-  # remove obs with no lats and longs
-  spdat <- as.data.frame(na.omit(spdat))
-
-  # rename
-  names(spdat) <- c("species","longitude","latitude")
-
-  flog.info("GBIF returned %s records for %s in %s sec.",
-            nrow(spdat), species, round(time1[[3]],1))
-
-  return(spdat)
-}
-
-
-#' Get species occurrences from the ALA
-#' @description
-#' @param
-#' @param
-#' @param
-#' @author Remko Duursma
-#' @export
-#' @examples
+#' \dontrun{
+#' o <- get_occurrences_ala("Eucalyptus botryoides")
+#' 
+#' # Should return a message like:
+#' # INFO [2017-05-12 09:52:10] ALA returned 3274 records for Eucalyptus botryoides in 2.6 sec.
+#' }
 #' @importFrom ALA4R occurrences
+#' @rdname get_occurrences
 get_occurrences_ala <- function(species){
 
   species <- fix_caps(species)
@@ -57,15 +32,44 @@ get_occurrences_ala <- function(species){
   return(spdat)
 }
 
+#' @rdname get_occurrences
+#' @export
+get_occurrences_gbif <- function(species){
+  
+  species <- fix_caps(species)
+  
+  time1 <- system.time(spdat <- occ_search(scientificName=species,
+                                           limit=50000,
+                                           fields =c('name','decimalLatitude','decimalLongitude'),
+                                           hasGeospatialIssue=FALSE,
+                                           return="data"))
+  
+  # remove obs with no lats and longs
+  spdat <- as.data.frame(na.omit(spdat))
+  
+  # rename
+  names(spdat) <- c("species","longitude","latitude")
+  
+  flog.info("GBIF returned %s records for %s in %s sec.",
+            nrow(spdat), species, round(time1[[3]],1))
+  
+  return(spdat)
+}
 
-#' Does
-#' @description
-#' @param
-#' @param
-#' @param
+
+#' Rasterize species occurrences
+#' @description Takes output from \code{\link{get_occurrences_ala}} or \code{\link{get_occurrences_gbif}}, and rasterizes the occurrences into 10min (ca. 18km2). At the moment rasterizing uses only this fixed resolution, which is the coarsest resolution for WorldClim data (see \url{http://www.worldclim.org/version1}). The result is a dataframe with latitude and longitude of the midpoints of the raster cells where the species occurs at least once. 
+#' @param spdat A dataframe returned by \code{\link{get_occurrences_ala}} or \code{\link{get_occurrences_gbif}}, or simply a dataframe with 'species', 'longitude', and 'latitude' (species is required).
+#' @param return_raster Logical (default FALSE). If TRUE, return the raster object, instead of the raster converted to a dataframe with midpoint coordinates.
 #' @author Remko Duursma
 #' @export
 #' @examples
+#' \dontrun{
+#' o <- get_occurrences_ala("Eucalyptus botryoides")
+#' r <- rasterize_occurrences(o)
+#' }
+#' @importFrom raster extract
+#' @importFrom raster subs
 rasterize_occurrences <- function(spdat, return_raster=FALSE){
 
   # make a new raster same size as worlclim but each gridcellhas ID number
@@ -73,8 +77,7 @@ rasterize_occurrences <- function(spdat, return_raster=FALSE){
   gridcellID[] <- 1:1944000
 
   # get centerpoint of gridcells where species occur, 1 observation for each gridcell
-  spdat$GridID <- raster::extract(gridcellID,cbind(spdat$longitude,spdat$latitude),
-                                  method='simple')
+  spdat$GridID <- extract(gridcellID,spdat[,c("longitude","latitude")],method='simple')
 
   # extract the gridCell ID for observations
   presence <- as.data.frame(cbind(1,unique(spdat$GridID)))
@@ -83,7 +86,7 @@ rasterize_occurrences <- function(spdat, return_raster=FALSE){
   colnames(presence) <- c("val","gridID")
 
   # raster of presence
-  presence_raster <- raster::subs(gridcellID,
+  presence_raster <- subs(gridcellID,
                                   as.data.frame(table(presence$gridID)))
 
   if(return_raster)return(presence_raster)
