@@ -66,9 +66,10 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
 
   #extract worldclim data; extract the gridCell ID for observations
   tmeanm <- precm <- matrix(ncol=12, nrow=nrow(data))
+
   for(i in 1:12){
-    tmeanm[,i] <- 0.1 * extract(tmean_raster[[i]], cbind(data$longitude,data$latitude), method='simple')
-    precm[,i] <- extract(prec_raster[[i]], cbind(data$longitude,data$latitude), method='simple')
+    tmeanm[,i] <- 0.1 * extract(tmean_raster[[i]], cbind(data$longitude,data$latitude))
+    precm[,i] <- extract(prec_raster[[i]], cbind(data$longitude,data$latitude))
   }
   colnames(tmeanm) <- paste0("tmean_",1:12)
   colnames(precm) <- paste0("prec_",1:12)
