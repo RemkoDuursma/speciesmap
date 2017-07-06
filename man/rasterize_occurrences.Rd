@@ -2,11 +2,24 @@
 % Please edit documentation in R/occurrences.R
 \name{rasterize_occurrences}
 \alias{rasterize_occurrences}
-\title{Does}
+\title{Rasterize species occurrences}
 \usage{
-rasterize_occurrences(spdat)
+rasterize_occurrences(spdat, return_raster = FALSE)
+}
+\arguments{
+\item{spdat}{A dataframe returned by \code{\link{get_occurrences_ala}} or \code{\link{get_occurrences_gbif}}, or simply a dataframe with 'species', 'longitude', and 'latitude' (species is required).}
+
+\item{return_raster}{Logical (default FALSE). If TRUE, return the raster object, instead of the raster converted to a dataframe with midpoint coordinates.}
+}
+\description{
+Takes output from \code{\link{get_occurrences_ala}} or \code{\link{get_occurrences_gbif}}, and rasterizes the occurrences into 10min (ca. 18km2). At the moment rasterizing uses only this fixed resolution, which is the coarsest resolution for WorldClim data (see \url{http://www.worldclim.org/version1}). The result is a dataframe with latitude and longitude of the midpoints of the raster cells where the species occurs at least once.
+}
+\examples{
+\dontrun{
+o <- get_occurrences_ala("Eucalyptus botryoides")
+r <- rasterize_occurrences(o)
+}
 }
 \author{
 Remko Duursma
 }
-

@@ -24,4 +24,3 @@ wc <- get_worldclim_rasters(topath=tempdir())
 \author{
 Remko Duursma
 }
-

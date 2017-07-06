@@ -24,4 +24,3 @@ Simple interface to download species occurrences, and extract climate observatio
 \author{
 Remko Duursma
 }
-

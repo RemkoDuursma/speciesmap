@@ -22,4 +22,3 @@ Given a dataframe with longitude and latitude coordinates, extracts rainfall and
 \author{
 Remko Duursma
 }
-
