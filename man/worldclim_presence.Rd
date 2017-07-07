@@ -5,7 +5,7 @@
 \title{Long-term climate at species occurrences}
 \usage{
 worldclim_presence(species, database = c("ALA", "GBIF"), rasterize = TRUE,
-  topath = tempdir(), return = c("summary", "all"))
+  topath = tempdir(), return = c("summary", "all"), PET = FALSE)
 }
 \arguments{
 \item{species}{Latin binomial for species, can be a vector.}
@@ -17,6 +17,8 @@ worldclim_presence(species, database = c("ALA", "GBIF"), rasterize = TRUE,
 \item{topath}{Path to store Worldclim rasters (if present there, will not be re-downloaded)}
 
 \item{return}{If summary (the default), returns summary variables of precip and temp, one row per species. For 'all' returns climate variables (and monthly ones) for all locations; result is a list if species is a vector.}
+
+\item{PET}{If TRUE (default FALSE), extracts PET estimates from the CGIAR-CSI database (see \code{\link{get_zomer_pet}} and \code{\link{get_worldclim_prectemp}})}
 }
 \description{
 Simple interface to download species occurrences, and extract climate observations from Worldclim for where the species is present.

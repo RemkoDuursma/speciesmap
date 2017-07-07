@@ -19,7 +19,9 @@ Zip files are downloaded from \url{http://biogeo.ucdavis.edu/data/climate/worldc
 }
 \examples{
 # Return worldclim tmean and prec rasters, as a list with those components
+\dontrun{
 wc <- get_worldclim_rasters(topath=tempdir())
+}
 }
 \author{
 Remko Duursma

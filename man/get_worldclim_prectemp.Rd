@@ -5,7 +5,7 @@
 \title{Get worldclim observations for specific locations}
 \usage{
 get_worldclim_prectemp(data, topath = tempdir(), return = c("all",
-  "summary"), worldclim = NULL)
+  "summary"), worldclim = NULL, PET = FALSE)
 }
 \arguments{
 \item{data}{Dataframe with columns \code{latitude} and \code{longitude}.}
@@ -15,9 +15,22 @@ get_worldclim_prectemp(data, topath = tempdir(), return = c("all",
 \item{return}{If 'all' returns monthly tmean, precip, as well as MAT and MAP. If 'summary', returns quantiles and means of MAT and MAP across all locations in \code{data}.}
 
 \item{worldclim}{Optionally, list of rasters returned by \code{\link{get_worldclim_rasters}}, to save time.}
+
+\item{PET}{If TRUE (default FALSE), calls \code{\link{get_zomer_pet}} to extract PET estimates for every location. See that help file on how to set this up.}
 }
 \description{
 Given a dataframe with longitude and latitude coordinates, extracts rainfall and temperature data from Worldclim. Rasters are downloaded if not provided.
+}
+\examples{
+\dontrun{
+# On some systems, the temporary file used for WorldClim rasters may fail (sometimes).
+# Suggested use is to specify the path:
+res <- get_worldclim_prectemp(data.frame(longitude=150, latitude=-33), topath="c:/tmp")
+
+# To extract PET, first set the path to where the layers were downloaded
+set_zomerpet_path("c:/data/zomer")
+res <- get_worldclim_prectemp(data.frame(longitude=150, latitude=-33), topath="c:/tmp", PET=TRUE)
+}
 }
 \author{
 Remko Duursma

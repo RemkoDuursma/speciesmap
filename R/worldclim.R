@@ -7,8 +7,11 @@
 #' @export
 #' @examples
 #' # Return worldclim tmean and prec rasters, as a list with those components
+#' \dontrun{
 #' wc <- get_worldclim_rasters(topath=tempdir())
+#' }
 #' @importFrom raster raster
+#' @importFrom utils unzip
 get_worldclim_rasters <- function(topath, clean=FALSE){
 
   download_worldclim <- function(basen, topath){
@@ -48,13 +51,24 @@ get_worldclim_rasters <- function(topath, clean=FALSE){
 #' @param data Dataframe with columns \code{latitude} and \code{longitude}.
 #' @param topath Path where Worldclim rasters will be downloaded to (defaults to a temporary directory)
 #' @param return If 'all' returns monthly tmean, precip, as well as MAT and MAP. If 'summary', returns quantiles and means of MAT and MAP across all locations in \code{data}.
+#' @param PET If TRUE (default FALSE), calls \code{\link{get_zomer_pet}} to extract PET estimates for every location. See that help file on how to set this up.
 #' @param worldclim Optionally, list of rasters returned by \code{\link{get_worldclim_rasters}}, to save time.
 #' @author Remko Duursma
 #' @export
 #' @examples
+#' \dontrun{
+#' # On some systems, the temporary file used for WorldClim rasters may fail (sometimes).
+#' # Suggested use is to specify the path:
+#' res <- get_worldclim_prectemp(data.frame(longitude=150, latitude=-33), topath="c:/tmp")
+#'
+#' # To extract PET, first set the path to where the layers were downloaded
+#' set_zomerpet_path("c:/data/zomer")
+#' res <- get_worldclim_prectemp(data.frame(longitude=150, latitude=-33), topath="c:/tmp", PET=TRUE)
+#' }
 get_worldclim_prectemp <- function(data, topath=tempdir(),
                                    return=c("all","summary"),
-                                   worldclim=NULL){
+                                   worldclim=NULL,
+                                   PET=FALSE){
 
   return <- match.arg(return)
 
@@ -81,6 +95,12 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
   pxy$MAT <- apply(pxy[,grep("tmean_",names(pxy))],1,mean)
   pxy$MAP <- apply(pxy[,grep("prec_",names(pxy))],1,sum)
 
+  # PET
+  if(PET){
+    pet <- get_zomer_pet(data)
+    pxy$PET <- pet$PET
+  }
+
   #
   if(return == "all")return(pxy)
 
@@ -96,6 +116,13 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
                                                  MAP_mean=mean(MAP,na.rm=TRUE),
                                                  MAP_q05=quantile(MAP,0.05,na.rm=TRUE),
                                                  MAP_q95=quantile(MAP,0.95,na.rm=TRUE))))
+    if(PET){
+      dfr2 <- suppressWarnings(with(pxy, data.frame(PET_mean=mean(PET,na.rm=TRUE),
+                                                   PET_q05=quantile(PET,0.05,na.rm=TRUE),
+                                                   PET_q95=quantile(PET,0.95,na.rm=TRUE)
+                                                   )))
+      dfr <- cbind(dfr, dfr2)
+    }
     rownames(dfr) <- NULL
     return(dfr)
   }
@@ -109,13 +136,15 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
 #' @param rasterize If TRUE, the default, resamples species occurrences into same spatial scale as Worldclim data.
 #' @param topath Path to store Worldclim rasters (if present there, will not be re-downloaded)
 #' @param return If summary (the default), returns summary variables of precip and temp, one row per species. For 'all' returns climate variables (and monthly ones) for all locations; result is a list if species is a vector.
+#' @param PET If TRUE (default FALSE), extracts PET estimates from the CGIAR-CSI database (see \code{\link{get_zomer_pet}} and \code{\link{get_worldclim_prectemp}})
 #' @author Remko Duursma
 #' @export
 #' @examples
 worldclim_presence <- function(species, database=c("ALA","GBIF"),
                                rasterize=TRUE,
                                topath=tempdir(),
-                               return=c("summary","all")){
+                               return=c("summary","all"),
+                               PET=FALSE){
 
   return <- match.arg(return)
   database <- match.arg(database)
@@ -134,7 +163,7 @@ worldclim_presence <- function(species, database=c("ALA","GBIF"),
 
     if(rasterize)spocc <- rasterize_occurrences(spocc)
 
-    l[[i]] <- get_worldclim_prectemp(spocc, topath=topath, return=return, worldclim=worldcl)
+    l[[i]] <- get_worldclim_prectemp(spocc, topath=topath, return=return, worldclim=worldcl, PET=PET)
   }
 
   if(return == "all"){

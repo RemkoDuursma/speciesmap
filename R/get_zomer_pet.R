@@ -3,6 +3,7 @@
 #'@examples
 #'dat <- data.frame(longitude=c(150,145,140), latitude=c(-33,-33,-33))
 #' get_zomer_pet(dat)
+#' @importFrom rgdal CRS
 get_zomer_pet <- function(data){
 
   petpath <- options()$zomerpetpath
