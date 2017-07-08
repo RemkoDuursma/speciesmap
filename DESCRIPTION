@@ -1,16 +1,15 @@
 Package: speciesmap
 Type: Package
 Title: Species Occurrences And Climate Observations
-Version: 0.1.0
+Version: 0.2.0
 Author: Remko Duursma, Daisy Duursma
-Depends:
+Imports:
+    sp,
+    stringr,
     ALA4R,
     rgbif,
     raster,
-    futile.logger,
-    rgdal
-Imports:
-    sp
+    futile.logger
 Maintainer: Remko Duursma <remkoduursma@gmail.com>
 Description: Retrieve species occurrences from GBIF or ALA, and retrieve climate
     variables at the occurrences from WorldClim. Optionally rasterize occurrences at

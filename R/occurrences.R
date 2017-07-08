@@ -16,9 +16,10 @@
 #' @importFrom futile.logger flog.info
 #' @importFrom stats na.omit
 #' @importFrom utils download.file
-#' @importFrom raster 'coordinates<-'
-#' @importFrom raster 'proj4string<-'
-#'
+#' @importFrom sp coordinates
+#' @importFrom sp proj4string
+#' @importFrom sp 'proj4string<-'
+#' @importFrom sp 'coordinates<-'
 get_occurrences_ala <- function(species){
 
   species <- fix_caps(species)
@@ -77,6 +78,7 @@ get_occurrences_gbif <- function(species){
 #' @importFrom raster subs
 #' @importFrom raster raster
 #' @importFrom raster rasterToPoints
+#' @importFrom raster extent
 rasterize_occurrences <- function(spdat, return_raster=FALSE){
 
   # make a new raster same size as worlclim but each gridcellhas ID number

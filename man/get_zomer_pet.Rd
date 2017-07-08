@@ -6,10 +6,16 @@
 \usage{
 get_zomer_pet(data)
 }
+\arguments{
+\item{data}{Dataframe with longitude, latitude}
+}
 \description{
 Extract PET from the CGIAR-CSI database
 }
 \examples{
+\dontrun{
+set_zomerpet_path("path/to/zomer")
 dat <- data.frame(longitude=c(150,145,140), latitude=c(-33,-33,-33))
 get_zomer_pet(dat)
+}
 }

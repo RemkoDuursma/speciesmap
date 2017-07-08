@@ -1,17 +1,17 @@
 #' Download Worldclim rasters
 #' @description Downloads 10min resolution Worldlclim rasters, stores them for reuse, and reads them into raster objects. Currently only downloads only tmean (monthly mean temperature) and prec (monthly total precipitation) layers.
-#' @param topath Local path to store files. Can use \code{\link{tempdir()}} if files need not be kept.
+#' @param topath Local path to store files. Can use \code{\link{tempdir}} if files need not be kept.
 #' @param clean Delete files after downloading (unimplemented)
 #' @details Zip files are downloaded from \url{http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur}
 #' @author Remko Duursma
 #' @export
+#' @importFrom raster raster
+#' @importFrom utils unzip
 #' @examples
 #' # Return worldclim tmean and prec rasters, as a list with those components
 #' \dontrun{
-#' wc <- get_worldclim_rasters(topath=tempdir())
+#' wc <- get_worldclim_rasters(topath="c:/tmp")
 #' }
-#' @importFrom raster raster
-#' @importFrom utils unzip
 get_worldclim_rasters <- function(topath, clean=FALSE){
 
   download_worldclim <- function(basen, topath){
@@ -139,7 +139,6 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
 #' @param PET If TRUE (default FALSE), extracts PET estimates from the CGIAR-CSI database (see \code{\link{get_zomer_pet}} and \code{\link{get_worldclim_prectemp}})
 #' @author Remko Duursma
 #' @export
-#' @examples
 worldclim_presence <- function(species, database=c("ALA","GBIF"),
                                rasterize=TRUE,
                                topath=tempdir(),
