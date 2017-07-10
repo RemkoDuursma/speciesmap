@@ -11,6 +11,10 @@
 #' @importFrom sp SpatialPoints
 get_zomer_pet <- function(data){
 
+  if(all(is.na(data$longitude))){
+    return(cbind(data, PET=NA))
+  }
+
   petpath <- options()$zomerpetpath
   if(is.null(petpath)){
     stop("Set path to downloaded PET database first, see ?set_zomerpet_path.")

@@ -50,6 +50,11 @@ get_occurrences_gbif <- function(species){
                                            hasGeospatialIssue=FALSE,
                                            return="data"))
 
+  if(grepl("no data found", spdat[1])){
+    flog.info("GBIF did not find data for %s", species)
+    return(data.frame(species=species, longitude=NA, latitude=NA))
+  }
+
   # remove obs with no lats and longs
   spdat <- as.data.frame(na.omit(spdat))
 
@@ -80,6 +85,8 @@ get_occurrences_gbif <- function(species){
 #' @importFrom raster rasterToPoints
 #' @importFrom raster extent
 rasterize_occurrences <- function(spdat, return_raster=FALSE){
+
+  if(all(is.na(spdat$longitude)))return(spdat)
 
   # make a new raster same size as worlclim but each gridcellhas ID number
   gridcellID <- raster(nrow=900,ncol=2160,extent(c(-180,180,-60,90)), crs="+proj=longlat +datum=WGS84")
