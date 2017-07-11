@@ -50,6 +50,15 @@ get_occurrences_gbif <- function(species){
                                            hasGeospatialIssue=FALSE,
                                            return="data"))
 
+  # If GBIF does not like the name, it returns the name it likes instead.
+  if(all.equal(names(spdat), "name")){
+    time1 <- system.time(spdat <- occ_search(scientificName=spdat$name[1],
+                                             limit=50000,
+                                             fields =c('name','decimalLatitude','decimalLongitude'),
+                                             hasGeospatialIssue=FALSE,
+                                             return="data"))
+  }
+  
   if(grepl("no data found", spdat[1])){
     flog.info("GBIF did not find data for %s", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
