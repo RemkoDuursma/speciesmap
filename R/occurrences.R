@@ -51,7 +51,7 @@ get_occurrences_gbif <- function(species){
                                            return="data"))
 
   # If GBIF does not like the name, it returns the name it likes instead.
-  if(all.equal(names(spdat), "name")){
+  if(identical(names(spdat), "name")){
     time1 <- system.time(spdat <- occ_search(scientificName=spdat$name[1],
                                              limit=50000,
                                              fields =c('name','decimalLatitude','decimalLongitude'),
