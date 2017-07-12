@@ -59,7 +59,9 @@ get_occurrences_gbif <- function(species){
                                              return="data"))
   }
   
-  if(grepl("no data found", spdat[1])){
+  # either gbif says 'no data', or all records have no lat/long,
+  # in which case it returns a dataframe with one column.
+  if(grepl("no data found", spdat[1]) | ncol(spdat) == 1){
     flog.info("GBIF did not find data for %s", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
   }
