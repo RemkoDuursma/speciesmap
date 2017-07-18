@@ -26,6 +26,12 @@ get_occurrences_ala <- function(species){
 
   time1 <- system.time(spdat <- occurrences(taxon=species, download_reason_id=7))
 
+  if(nrow(spdat$data) == 0){
+    flog.info("ALA did not find data for %s", species)
+    return(data.frame(species=species, longitude=NA, latitude=NA))
+  }
+
+  # Remove missing longitudes
   spdat <- spdat$data[!is.na(spdat$data$longitude), c("species","longitude","latitude")]
 
   # Returns other species as well, for some reason
@@ -54,7 +60,7 @@ get_occurrences_gbif <- function(species){
     flog.info("GBIF service failed for %s, please try again.", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
   }
-  
+
   # If GBIF does not like the name, it returns the name it likes instead.
   if(identical(names(spdat), "name")){
     time1 <- system.time(spdat <- occ_search(scientificName=spdat$name[1],
@@ -63,7 +69,7 @@ get_occurrences_gbif <- function(species){
                                              hasGeospatialIssue=FALSE,
                                              return="data"))
   }
-  
+
   # either gbif says 'no data', or all records have no lat/long,
   # in which case it returns a dataframe with one column.
   if(grepl("no data found", spdat[1]) | isTRUE(ncol(spdat) == 1)){
@@ -84,12 +90,12 @@ get_occurrences_gbif <- function(species){
 }
 
 get_occurrences_both <- function(species){
-  
-  
+
+
   gbif <- get_occurrences_gbif(species)
   ala <- get_occurrences_ala(species)
-  
-return(rbind(gbif, ala))  
+
+return(rbind(gbif, ala))
 }
 
 

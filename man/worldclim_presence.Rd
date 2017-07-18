@@ -4,8 +4,9 @@
 \alias{worldclim_presence}
 \title{Long-term climate at species occurrences}
 \usage{
-worldclim_presence(species, database = c("ALA", "GBIF"), rasterize = TRUE,
-  topath = tempdir(), return = c("summary", "all"), PET = FALSE)
+worldclim_presence(species, database = c("ALA", "GBIF", "both"),
+  rasterize = TRUE, topath = tempdir(), return = c("summary", "all"),
+  PET = FALSE)
 }
 \arguments{
 \item{species}{Latin binomial for species, can be a vector.}

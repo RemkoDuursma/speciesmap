@@ -1,8 +1,12 @@
 # speciesmap : species occurrences and long-term climate
 
-This R package obtains species records from GBIF or ALA, and retrieves climate variables (MAP, MAT) at species locations from WorldClim.
+[![](http://www.r-pkg.org/badges/version/speciesmap)]()
+
+This R package obtains species records from GBIF or ALA, and retrieves climate variables (MAP, MAT) at species locations from WorldClim, and optionally, potential evapotranspiration (PET) from CGIAR-CSI.
 
 Use this package if you want to estimate broad climate occupancy by species, as defined by MAP and MAT across the range where the species occur. The package calculates mean and quantiles of MAT and MAP across the range, and reduces sampling bias by rasterizing the occurrences.
+
+The approach is explained in a [blog post](http://www.remkoduursma.com/blog/2017/05/12/calculating-species-climate-envelopes-in-r/).
 
 The main use of the package is the function `worldclim_presence`, which takes the following steps. Step 3 is optional but was the main reason to write this package.
 
