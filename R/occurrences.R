@@ -50,7 +50,7 @@ get_occurrences_gbif <- function(species){
 
   species <- fix_caps(species)
 
-  time1 <- system.time(try(spdat <- occ_search(scientificName=species,
+  time1 <- system.time(spdat <- try(occ_search(scientificName=species,
                                            limit=50000,
                                            fields =c('name','decimalLatitude','decimalLongitude'),
                                            hasGeospatialIssue=FALSE,
