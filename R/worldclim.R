@@ -139,14 +139,14 @@ get_worldclim_prectemp <- function(data, topath=tempdir(),
 #' @param PET If TRUE (default FALSE), extracts PET estimates from the CGIAR-CSI database (see \code{\link{get_zomer_pet}} and \code{\link{get_worldclim_prectemp}})
 #' @author Remko Duursma
 #' @export
-worldclim_presence <- function(species, database=c("ALA","GBIF"),
+worldclim_presence <- function(species, database=c("ALA","GBIF", "both"),
                                rasterize=TRUE,
                                topath=tempdir(),
                                return=c("summary","all"),
                                PET=FALSE){
 
   return <- match.arg(return)
-  database <- match.arg(database)
+  database <- match.arg(database, several.ok = TRUE)
 
   worldcl <- get_worldclim_rasters(topath)
 
@@ -158,11 +158,14 @@ worldclim_presence <- function(species, database=c("ALA","GBIF"),
       spocc <- get_occurrences_gbif(species[i])
     } else if(database == "ALA"){
       spocc <- get_occurrences_ala(species[i])
+    } else if(database == "both"){
+      spocc <- get_occurrences_both(species[i])
     }
 
     if(rasterize)spocc <- rasterize_occurrences(spocc)
 
     l[[i]] <- get_worldclim_prectemp(spocc, topath=topath, return=return, worldclim=worldcl, PET=PET)
+    flog.info("Species %s of %s completed", i, length(species))
   }
 
   if(return == "all"){

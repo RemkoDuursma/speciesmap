@@ -44,12 +44,17 @@ get_occurrences_gbif <- function(species){
 
   species <- fix_caps(species)
 
-  time1 <- system.time(spdat <- occ_search(scientificName=species,
+  time1 <- system.time(try(spdat <- occ_search(scientificName=species,
                                            limit=50000,
                                            fields =c('name','decimalLatitude','decimalLongitude'),
                                            hasGeospatialIssue=FALSE,
-                                           return="data"))
+                                           return="data")))
 
+  if(inherits(spdat, "try-error")){
+    flog.info("GBIF service failed for %s, please try again.", species)
+    return(data.frame(species=species, longitude=NA, latitude=NA))
+  }
+  
   # If GBIF does not like the name, it returns the name it likes instead.
   if(identical(names(spdat), "name")){
     time1 <- system.time(spdat <- occ_search(scientificName=spdat$name[1],
@@ -61,7 +66,7 @@ get_occurrences_gbif <- function(species){
   
   # either gbif says 'no data', or all records have no lat/long,
   # in which case it returns a dataframe with one column.
-  if(grepl("no data found", spdat[1]) | ncol(spdat) == 1){
+  if(grepl("no data found", spdat[1]) | isTRUE(ncol(spdat) == 1)){
     flog.info("GBIF did not find data for %s", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
   }
@@ -76,6 +81,15 @@ get_occurrences_gbif <- function(species){
             nrow(spdat), species, round(time1[[3]],1))
 
   return(spdat)
+}
+
+get_occurrences_both <- function(species){
+  
+  
+  gbif <- get_occurrences_gbif(species)
+  ala <- get_occurrences_ala(species)
+  
+return(rbind(gbif, ala))  
 }
 
 
