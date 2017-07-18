@@ -69,6 +69,12 @@ get_occurrences_gbif <- function(species){
                                              hasGeospatialIssue=FALSE,
                                              return="data"))
   }
+  
+  # But sometimes it returns the records for the new species name, silently switching species.
+  if(unique(spdat$name) != species){
+    flog.info("GBIF prefers new name %s for %s", unique(spdat$name), species)
+    spdat$name <- species
+  }
 
   # either gbif says 'no data', or all records have no lat/long,
   # in which case it returns a dataframe with one column.
