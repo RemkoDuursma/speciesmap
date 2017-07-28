@@ -26,7 +26,7 @@ get_occurrences_ala <- function(species){
 
   time1 <- system.time(spdat <- occurrences(taxon=species, download_reason_id=7))
 
-  if(nrow(spdat$data) == 0){
+  if(nrow(spdat$data) == 0 || all(spdat$data$longitude == "")){
     flog.info("ALA did not find data for %s", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
   }
@@ -70,18 +70,20 @@ get_occurrences_gbif <- function(species){
                                              return="data"))
   }
   
-  # But sometimes it returns the records for the new species name, silently switching species.
-  if(unique(spdat$name) != species){
-    flog.info("GBIF prefers new name %s for %s", unique(spdat$name), species)
-    spdat$name <- species
-  }
-
   # either gbif says 'no data', or all records have no lat/long,
   # in which case it returns a dataframe with one column.
   if(grepl("no data found", spdat[1]) | isTRUE(ncol(spdat) == 1)){
     flog.info("GBIF did not find data for %s", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
   }
+  
+  # Sometimes GBIF returns the records for the new species name, silently switching species.
+  if(unique(spdat$name) != species){
+    flog.info("GBIF prefers new name %s for %s", unique(spdat$name), species)
+    spdat$name <- species
+  }
+
+
 
   # remove obs with no lats and longs
   spdat <- as.data.frame(na.omit(spdat))

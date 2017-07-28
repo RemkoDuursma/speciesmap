@@ -1,7 +1,7 @@
 Package: speciesmap
 Type: Package
 Title: Species Occurrences And Climate Observations
-Version: 0.2.3
+Version: 0.2.4
 Author: Remko Duursma, Daisy Duursma
 Imports:
     sp,
