@@ -26,14 +26,20 @@
 get_occurrences_ala <- function(species, ala_args=NULL){
 
   species <- fix_caps(species)
+  empty <- data.frame(species=species, longitude=NA, latitude=NA)
 
+  if(!assert_species_name(species)){
+    flog.info("No search performed for genus only: %s", species)
+    return(empty)
+  }
+  
   time1 <- system.time({
     spdat <- do.call(occurrences, c(list(taxon=species, download_reason_id=7), ala_args))
   })
   
   if(nrow(spdat$data) == 0 || all(spdat$data$longitude == "")){
     flog.info("ALA did not find data for %s", species)
-    return(data.frame(species=species, longitude=NA, latitude=NA))
+    return(empty)
   }
 
   # Remove missing longitudes
@@ -55,7 +61,13 @@ get_occurrences_ala <- function(species, ala_args=NULL){
 get_occurrences_gbif <- function(species, gbif_args=NULL){
 
   species <- fix_caps(species)
-
+  empty <- data.frame(species=species, longitude=NA, latitude=NA)
+  
+  if(!assert_species_name(species)){
+    flog.info("No search performed for genus only: %s", species)
+    return(empty)
+  }
+  
   time1 <- system.time({
     spdat <- try(do.call(occ_search, c(list(scientificName=species,
                                            limit=50000,
@@ -66,7 +78,7 @@ get_occurrences_gbif <- function(species, gbif_args=NULL){
 
   if(inherits(spdat, "try-error")){
     flog.info("GBIF service failed for %s, please try again.", species)
-    return(data.frame(species=species, longitude=NA, latitude=NA))
+    return(empty)
   }
 
   # If GBIF does not like the name, it returns the name it likes instead.
@@ -82,7 +94,7 @@ get_occurrences_gbif <- function(species, gbif_args=NULL){
   # in which case it returns a dataframe with one column.
   if(grepl("no data found", spdat[1]) | isTRUE(ncol(spdat) == 1)){
     flog.info("GBIF did not find data for %s", species)
-    return(data.frame(species=species, longitude=NA, latitude=NA))
+    return(empty)
   }
   
   # Sometimes GBIF returns the records for the new species name, silently switching species.
@@ -90,8 +102,6 @@ get_occurrences_gbif <- function(species, gbif_args=NULL){
     flog.info("GBIF prefers new name %s for %s", unique(spdat$name), species)
     spdat$name <- species
   }
-
-
 
   # remove obs with no lats and longs
   spdat <- as.data.frame(na.omit(spdat))
