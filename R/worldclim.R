@@ -248,21 +248,22 @@ annualize_clim <- function(cl){
 climate_presence <- function(species, database=c("ALA","GBIF", "both"),
                              vars=NULL,
                              output=c("monthly","annual"),
-                             rasterize=TRUE){
+                             rasterize=TRUE,
+                             ala_args=NULL,
+                             gbif_args=NULL){
 
-  database <- match.arg(database, several.ok = TRUE)
-  if(length(database) == 3)database <- "both"
-
+  database <- match.arg(database)
+  
   l <- list()
 
   for(i in seq_along(species)){
 
     if(database == "GBIF"){
-      spocc <- get_occurrences_gbif(species[i])
+      spocc <- get_occurrences_gbif(species[i], gbif_args=gbif_args)
     } else if(database == "ALA"){
-      spocc <- get_occurrences_ala(species[i])
+      spocc <- get_occurrences_ala(species[i], ala_args=ala_args)
     } else if(database == "both"){
-      spocc <- get_occurrences_both(species[i])
+      spocc <- get_occurrences_both(species[i], ala_args=ala_args, gbif_args=gbif_args)
     }
 
     if(rasterize)spocc <- rasterize_occurrences(spocc)

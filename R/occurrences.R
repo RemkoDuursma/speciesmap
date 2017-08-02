@@ -1,6 +1,9 @@
 #' Get species occurrences from the ALA or GBIF
 #' @description A simple wrapper to \code{\link{occurrences}} from \CRANpkg{ALA4R}. Performs a search for a \code{species} (e.g. 'Eucalyptus globulus'), sets the \code{download_reason} to 'testing' (see \code{?ala_reasons}), and returns only the species, the longitude, and the latitude of all observations.
 #' @param species The full scientific species name, quoted.
+#' @param ala_args Optionally, a list of arguments passed to \code{occurrences} (ALA4R package).
+#' @param gbif_args Optionally, a list of arguments passed to \code{occ_search} (rgbif package).
+#' @details Note that when passing additional arguments to \code{occ_search}, the following arguments are already set and can not be overriden : \code{hasGeospatialIssue} (FALSE), \code{limit} (50000), \code{fields} (species, lat and long), and of course \code{scientificName}. When passing additional arguments to \code{occurrences}, only \code{download_reason} (7) is already set.
 #' @author Remko Duursma
 #' @export
 #' @seealso \code{\link{get_occurrences_gbif}}
@@ -20,12 +23,14 @@
 #' @importFrom sp proj4string
 #' @importFrom sp 'proj4string<-'
 #' @importFrom sp 'coordinates<-'
-get_occurrences_ala <- function(species){
+get_occurrences_ala <- function(species, ala_args=NULL){
 
   species <- fix_caps(species)
 
-  time1 <- system.time(spdat <- occurrences(taxon=species, download_reason_id=7))
-
+  time1 <- system.time({
+    spdat <- do.call(occurrences, c(list(taxon=species, download_reason_id=7), ala_args))
+  })
+  
   if(nrow(spdat$data) == 0 || all(spdat$data$longitude == "")){
     flog.info("ALA did not find data for %s", species)
     return(data.frame(species=species, longitude=NA, latitude=NA))
@@ -43,18 +48,21 @@ get_occurrences_ala <- function(species){
   return(spdat)
 }
 
+
 #' @rdname get_occurrences
 #' @importFrom rgbif occ_search
 #' @export
-get_occurrences_gbif <- function(species){
+get_occurrences_gbif <- function(species, gbif_args=NULL){
 
   species <- fix_caps(species)
 
-  time1 <- system.time(spdat <- try(occ_search(scientificName=species,
+  time1 <- system.time({
+    spdat <- try(do.call(occ_search, c(list(scientificName=species,
                                            limit=50000,
                                            fields =c('name','decimalLatitude','decimalLongitude'),
                                            hasGeospatialIssue=FALSE,
-                                           return="data")))
+                                           return="data"), gbif_args)))
+  })
 
   if(inherits(spdat, "try-error")){
     flog.info("GBIF service failed for %s, please try again.", species)
@@ -97,11 +105,10 @@ get_occurrences_gbif <- function(species){
   return(spdat)
 }
 
-get_occurrences_both <- function(species){
+get_occurrences_both <- function(species, ala_args=NULL, gbif_args=NULL){
 
-
-  gbif <- get_occurrences_gbif(species)
-  ala <- get_occurrences_ala(species)
+  gbif <- get_occurrences_gbif(species, gbif_args=gbif_args)
+  ala <- get_occurrences_ala(species, ala_args=ala_args)
 
 return(rbind(gbif, ala))
 }

@@ -5,7 +5,8 @@
 \title{Long-term climate at species occurrences}
 \usage{
 climate_presence(species, database = c("ALA", "GBIF", "both"), vars = NULL,
-  output = c("monthly", "annual"), rasterize = TRUE)
+  output = c("monthly", "annual"), rasterize = TRUE, ala_args = NULL,
+  gbif_args = NULL)
 }
 \arguments{
 \item{species}{Latin binomial for species, can be a vector.}
