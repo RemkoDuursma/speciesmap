@@ -10,11 +10,11 @@ get_zomer_pet(data)
 \item{data}{Dataframe with longitude, latitude}
 }
 \description{
-Extract PET from the CGIAR-CSI database
+To allow extraction of PET from the CGIAR-CSI Global aridity and PET database (\url{http://www.cgiar-csi.org/data/global-aridity-and-pet-database}), you must manually download the file 'Global PET - Annual.zip' from the above url (follow 'Download from the HarvestChoice Dropbox'), and unzip it in some directory. Then set the path with options() as shown below in the examples.
 }
 \examples{
 \dontrun{
-set_zomerpet_path("path/to/zomer")
+options(zomerpetpath="path/to/zomer")
 dat <- data.frame(longitude=c(150,145,140), latitude=c(-33,-33,-33))
 get_zomer_pet(dat)
 }

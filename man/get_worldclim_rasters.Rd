@@ -4,23 +4,18 @@
 \alias{get_worldclim_rasters}
 \title{Download Worldclim rasters}
 \usage{
-get_worldclim_rasters(topath, clean = FALSE)
-}
-\arguments{
-\item{topath}{Local path to store files. Can use \code{\link{tempdir}} if files need not be kept.}
-
-\item{clean}{Delete files after downloading (unimplemented)}
+get_worldclim_rasters(wc_vars = "tavg")
 }
 \description{
-Downloads 10min resolution Worldlclim rasters, stores them for reuse, and reads them into raster objects. Currently only downloads only tmean (monthly mean temperature) and prec (monthly total precipitation) layers.
+Downloads and unzips 10min resolution Worldlclim rasters, stores them for reuse.
 }
 \details{
-Zip files are downloaded from \url{http://biogeo.ucdavis.edu/data/climate/worldclim/1_4/grid/cur}
+Zip files are downloaded from \url{http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base}
 }
 \examples{
 # Return worldclim tmean and prec rasters, as a list with those components
 \dontrun{
-wc <- get_worldclim_rasters(topath="c:/tmp")
+wc <- get_worldclim_rasters(wc_vars=c("tavg","tmin"))
 }
 }
 \author{

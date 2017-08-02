@@ -1,7 +1,7 @@
 Package: speciesmap
 Type: Package
 Title: Species Occurrences And Climate Observations
-Version: 0.2.4
+Version: 0.3
 Author: Remko Duursma, Daisy Duursma
 Imports:
     sp,
@@ -12,7 +12,7 @@ Imports:
     futile.logger
 Maintainer: Remko Duursma <remkoduursma@gmail.com>
 Description: Retrieve species occurrences from GBIF or ALA, and retrieve climate
-    variables at the occurrences from WorldClim. Optionally rasterize occurrences at
-    resolution of Worldclim to reduce sampling bias.
+    variables at the occurrences from WorldClim and the CGIAR-CSI aridity database. 
+    Optionally rasterize occurrences at resolution of Worldclim to reduce sampling bias.
 License: GPL-2
 RoxygenNote: 6.0.1
