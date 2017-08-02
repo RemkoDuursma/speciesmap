@@ -13,5 +13,5 @@ fix_caps <- function (string) {
 
 assert_species_name <- function(x){
   x <- strsplit(x, " ")
-  length(x)[[1]] > 1
+  length(x[[1]]) > 1
 }

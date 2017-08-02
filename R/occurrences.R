@@ -25,6 +25,11 @@
 #' @importFrom sp 'coordinates<-'
 get_occurrences_ala <- function(species, ala_args=NULL){
 
+  if(length(species) > 1){
+    l <- lapply(species, get_occurrences_ala, ala_args=ala_args)
+    return(do.call(rbind, l))
+  }
+  
   species <- fix_caps(species)
   empty <- data.frame(species=species, longitude=NA, latitude=NA)
 
@@ -60,6 +65,11 @@ get_occurrences_ala <- function(species, ala_args=NULL){
 #' @export
 get_occurrences_gbif <- function(species, gbif_args=NULL){
 
+  if(length(species) > 1){
+    l <- lapply(species, get_occurrences_gbif, gbif_args=gbif_args)
+    return(do.call(rbind, l))
+  }
+  
   species <- fix_caps(species)
   empty <- data.frame(species=species, longitude=NA, latitude=NA)
   
