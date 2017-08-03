@@ -29,12 +29,12 @@ get_worldclim_rasters <- function(wc_vars="tavg"){
   }
 
   wcpath <- get_wcpath()
-  
+
   for(i in seq_along(wc_vars)){
-    download_worldclim(vars[i], wcpath)
+    download_worldclim(wc_vars[i], wcpath)
   }
 
-  
+
 }
 
 wc_url <- function(wc_var){
@@ -49,7 +49,7 @@ wc_tif_fns <- function(wc_var, topath){
     # monthly variables
     file.path(topath, sprintf("wc2.0_10m_%s_%02d.tif", wc_var, 1:12))
   }
-  
+
 }
 
 
@@ -63,18 +63,18 @@ get_wcpath <- function(){
 
 
 read_worldclim_raster <- function(wc_var){
-  
+
   wcpath <- get_wcpath()
-  
+
   wc_tifs <- wc_tif_fns(wc_var, wcpath)
   if(!all(file.exists(wc_tifs))){
     get_worldclim_rasters(wc_var)
   }
-  
+
   # Read the rasters into a list
   ras <- lapply(wc_tifs, raster)
   flog.info(sprintf("WorldClim raster %s read.", wc_var))
-  
+
 return(ras)
 }
 
@@ -102,22 +102,22 @@ return(ras)
 #' # To extract PET, first set the path to where the layers were downloaded
 #' options(zomerpetpath="c:/data/zomer")
 #' res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33), vars=c("pet","tavg"))
-#' 
+#'
 #' # By default all monthly values are returned, use annualize to get annual
 #' # averages (or total in case of MAP):
 #' annualize(res)
-#' 
+#'
 #' # ... or simply use output="annual"
-#' res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33), 
+#' res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33),
 #' vars=c("pet","tavg"), output="annual")
 #' }
 #' @importFrom stats quantile
-get_climate_vars <- function(data, 
+get_climate_vars <- function(data,
                              vars=NULL,
                              output=c("monthly","annual")){
 
   output <- match.arg(output)
-  
+
   if("pet" %in% vars){
     pet <- get_zomer_pet(data)
     vars <- vars[vars != "pet"]
@@ -128,41 +128,41 @@ get_climate_vars <- function(data,
   if(!length(vars)){
     return(pet)
   }
-  
+
   ras <- lapply(vars, read_worldclim_raster)
   names(ras) <- vars
-  
+
   extract_from_wcras <- function(r, wc_var, data){
-  
-    m <- matrix(ncol=length(r), nrow=nrow(data), 
+
+    m <- matrix(ncol=length(r), nrow=nrow(data),
                 dimnames=list(NULL, paste(wc_var, seq_along(r), sep="_")))
-  
+
     for(i in seq_along(r)){
       m[,i] <- extract(r[[i]], data[,c("longitude","latitude")])
     }
-    
+
     flog.info("Extracted %s records from %s WorldClim raster.", nrow(data), wc_var)
-  
+
   return(as.data.frame(m))
-  }  
-  
+  }
+
   l <- list()
   for(i in seq_along(vars)){
     l[[i]] <- extract_from_wcras(ras[[i]], vars[i], data)
   }
   l <- do.call(cbind, l)
-  
+
   if(havepet){
     l <- cbind(l, PET=pet$PET)
   }
 
   d <- as.data.frame(cbind(data, l))
   class(d) <- c("climvardf","data.frame")
-  
+
   if(output == "annual"){
     d <- annualize_clim(d)
   }
-  
+
 return(d)
 }
 
@@ -170,17 +170,16 @@ return(d)
 #'@export
 #' @rdname get_climate_vars
 aggregate_clim <- function(cl, funs=c("mean", "quantile"), probs=c(0.05,0.95)){
-  
+
   # Loop because quantile uses special argument:
   l <- list()
   for(i in seq_along(funs)){
     fun <- funs[i]
     if(fun == "quantile"){
       res <- summaryBy(. ~ species, data=cl, FUN=quantile, probs=probs, na.rm=TRUE)
-      ind <- res[,1,drop=FALSE]
       res <- res[,6:ncol(res),drop=FALSE] # drop species, lat, long
       nm <- names(res)
-      
+
       for(j in seq_along(probs)){
         nm <- gsub(sprintf("\\.%s%%",probs[j]*100), sprintf("_q%02d", 100*probs[j]), nm)
       }
@@ -189,32 +188,35 @@ aggregate_clim <- function(cl, funs=c("mean", "quantile"), probs=c(0.05,0.95)){
     } else {
       f <- get(fun)
       res <- summaryBy(. ~ species, data=cl, FUN=f, na.rm=TRUE, keep.names=TRUE)
-      ind <- res[,1,drop=FALSE]
       res <- res[,4:ncol(res),drop=FALSE] # drop species, lat, long
       names(res) <- paste(names(res),fun, sep="_")
       l[[i]] <- res
     }
   }
-  
+
   l <- do.call(cbind, l)
   l <- l[,order(names(l)),drop=FALSE]
 
-return(cbind(ind, l))
+  ndf <- summaryBy(latitude ~ species, data=cl, FUN=length, keep.names=TRUE)
+  names(ndf)[2] <- "ncells"
+  l <- cbind(ndf, l)
+
+return(l)
 }
 
 #' @rdname get_climate_vars
 #' @export
 annualize_clim <- function(cl){
-  
+
   apply_var <- function(var, data, fun, newname=NULL){
     d <- data.frame(apply(data[, grep(var, names(data))],1,fun))
     names(d) <- ifelse(is.null(newname), var, newname)
     return(d)
   }
-  
+
   vars <- gsub("_1","",names(cl)[grep(".+_1$", names(cl))])
   if("PET" %in% names(cl))vars <- c(vars, "PET")
-  
+
   l <- list()
   for(i in seq_along(vars)){
     if(vars[i] == "prec"){
@@ -230,9 +232,9 @@ annualize_clim <- function(cl){
     }
   }
   l <- do.call(cbind, l)
-  
+
   return(cbind(cl[,c("species","longitude","latitude")], l))
-  
+
 }
 
 #' Long-term climate at species occurrences
@@ -253,7 +255,7 @@ climate_presence <- function(species, database=c("ALA","GBIF", "both"),
                              gbif_args=NULL){
 
   database <- match.arg(database)
-  
+
   l <- list()
 
   for(i in seq_along(species)){

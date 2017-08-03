@@ -1,0 +1,122 @@
+---
+title: "An introduction to speciesmap"
+author: "Remko Duursma"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{An introduction to speciesmap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r}
+library(speciesmap)
+```
+
+
+## Species occurrences
+
+If you are only interested in extracting species occurrences, `speciesmap` provides thin wrappers around `rgbif` and `ALA4R` packages. The output is harmonized and simplified, returning a dataframe with species, latitude and longitude for all occurrences returned by the database. Some checking on the output is also performed, as well as useful error messages when either data service is unresponsive. If no records are found a dataframe with the species, and a single NA for latitude and longitude is returned.
+
+To extract occurrences from the ALA,
+
+```{r eval=FALSE}
+benthocc <- get_occurrences_ala("Eucalyptus benthamii") 
+```
+```{r echo=FALSE}
+data(benthocc)
+```
+
+This gives (first 6 rows shown):
+
+```{r echo=FALSE}
+knitr::kable(head(benthocc))
+```
+
+
+The corresponding function for GBIF is `get_occurrences_gbif`.
+
+Both `get_occurrences_*` functions are vectorized, so you can do:
+
+```{r, eval=FALSE}
+benthocc <- get_occurrences_ala(c("Eucalyptus benthamii","Eucalyptus globulus"))
+```
+
+for example.
+
+
+## Rasterizing
+
+One of the motivating factors for writing `speciesmap` is the ability to quickly rasterize occurrences into a spatial resolution that matches climate data (in particular, WorldClim). At the moment only one resolution is possible, but this issue will be removed in a future version.
+
+Rasterizing works by storing the latitude and longitude of 10min degree cells where the species has been observed at least once. The idea is to remove bias towards heavily sampled areas, since the main objective of the package is to study climate occupancy of species.
+
+We can simply do,
+
+```{r, eval=FALSE}
+benthoccras <- rasterize_occurrences(benthocc)
+```
+```{r, echo=FALSE}
+data(benthoccras)
+```
+
+The resulting object looks just like before, but has fewer rows:
+
+```{r}
+knitr::kable(benthoccras)
+```
+
+In this case, this rare species of Eucalyptus occurs in only thirteen 10min cells.
+
+
+## Climate at species occurrences
+
+The main function in `speciesmap` is `climate_presence`, which performs all steps at once:
+
+- Find species occurrences from ALA, GBIF or both.
+- Rasterize occurrences (optionally)
+- Extract climate variables of interest from WorldClim and CGIAR-CSI (PET)
+- Download WorldClim layers if necessary first
+
+It is necessary to set the path to where the WorldClim data will be downloaded. It is of course recommended you recycle this between projects. Use the `options` as below.
+
+For potential evapotranspiration, the package extracts data from the CGIAR-CSI database (Zomer et al.), which has to be manually downloaded first.
+
+To do this, visit (\url{http://www.cgiar-csi.org/data/global-aridity-and-pet-database}), and manually download the file 'Global PET - Annual.zip' (follow 'Download from the HarvestChoice Dropbox'), and unzip it in some directory. Then set the path with options() as shown below.
+
+In this example we find potential evapotranspiration, average temperature, maximum temperature at the rasterized locations of *Eucalyptus benthamii*. 
+```{r eval=FALSE}
+options(worldclimpath="c:/data/worldclim", 
+        zomerpetpath="c:/data/zomer")
+benthclim <- climate_presence("Eucalyptus benthamii", database="ALA",
+                              vars=c("pet","tavg","tmax"))
+```
+```{r, echo=FALSE}
+data(benthclim)
+
+```
+
+The output is monthly, in wide format (shown below is an excerpt):
+
+```{r echo=FALSE}
+knitr::kable(benthclim[,1:8])
+```
+
+
+```{r, eval=FALSE}
+library(magrittr)
+benthclim %>% annualize_clim
+```
+```{r, echo=FALSE}
+library(magrittr)
+knitr::kable(benthclim %>% annualize_clim)
+```
+
+```{r, eval=FALSE}
+benthclim %>% annualize_clim %>% aggregate_clim
+```
+```{r, echo=FALSE}
+knitr::kable(benthclim %>% annualize_clim %>% aggregate_clim)
+```
+

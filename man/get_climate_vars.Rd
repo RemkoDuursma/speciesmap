@@ -48,7 +48,7 @@ res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33), vars=c("pe
 annualize(res)
 
 # ... or simply use output="annual"
-res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33), 
+res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33),
 vars=c("pet","tavg"), output="annual")
 }
 }

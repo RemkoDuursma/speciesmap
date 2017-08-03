@@ -16,3 +16,6 @@ Description: Retrieve species occurrences from GBIF or ALA, and retrieve climate
     Optionally rasterize occurrences at resolution of Worldclim to reduce sampling bias.
 License: GPL-2
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
