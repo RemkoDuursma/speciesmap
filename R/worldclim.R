@@ -233,7 +233,11 @@ annualize_clim <- function(cl){
   }
   l <- do.call(cbind, l)
 
-  return(cbind(cl[,c("species","longitude","latitude")], l))
+  if("species" %in% names(cl)){
+    return(cbind(cl[,c("species","longitude","latitude")], l))
+  } else {
+    return(cbind(cl[,c("longitude","latitude")], l))
+  }
 
 }
 
