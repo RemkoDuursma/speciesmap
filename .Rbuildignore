@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 .gitignore
 R_other/
+^C:\repos\speciesmap\docs$
+^_pkgdown\.yml$

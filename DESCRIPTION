@@ -2,7 +2,6 @@ Package: speciesmap
 Type: Package
 Title: Species Occurrences And Climate Observations
 Version: 0.3-3
-Author: Remko Duursma, Daisy Duursma
 Imports:
     sp,
     stringr,
@@ -19,3 +18,12 @@ RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
+Authors@R: 
+    c(person(given = "Remko",
+             family = "Duursma",
+             email = "remkoduursma@gmail.com",
+			 role=c("aut","cre")),
+      person(given = "Daisy",
+             family = "Duursma",
+             email = "daisyduursma@gmail.com",
+			 role="aut"))

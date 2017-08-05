@@ -17,7 +17,7 @@ get_occurrences_gbif(species, gbif_args = NULL)
 \item{gbif_args}{Optionally, a list of arguments passed to \code{occ_search} (rgbif package).}
 }
 \description{
-A simple wrapper to \code{\link{occurrences}} from \CRANpkg{ALA4R}. Performs a search for a \code{species} (e.g. 'Eucalyptus globulus'), sets the \code{download_reason} to 'testing' (see \code{?ala_reasons}), and returns only the species, the longitude, and the latitude of all observations.
+A simple wrapper to \code{\link{occurrences}} from \code{ALA4R}. Performs a search for a \code{species} (e.g. 'Eucalyptus globulus'), sets the \code{download_reason} to 'testing' (see \code{?ala_reasons}), and returns only the species, the longitude, and the latitude of all observations.
 }
 \details{
 Note that when passing additional arguments to \code{occ_search}, the following arguments are already set and can not be overriden : \code{hasGeospatialIssue} (FALSE), \code{limit} (50000), \code{fields} (species, lat and long), and of course \code{scientificName}. When passing additional arguments to \code{occurrences}, only \code{download_reason} (7) is already set.

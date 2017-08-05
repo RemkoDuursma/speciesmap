@@ -1,5 +1,5 @@
 #' Get species occurrences from the ALA or GBIF
-#' @description A simple wrapper to \code{\link{occurrences}} from \CRANpkg{ALA4R}. Performs a search for a \code{species} (e.g. 'Eucalyptus globulus'), sets the \code{download_reason} to 'testing' (see \code{?ala_reasons}), and returns only the species, the longitude, and the latitude of all observations.
+#' @description A simple wrapper to \code{\link{occurrences}} from \code{ALA4R}. Performs a search for a \code{species} (e.g. 'Eucalyptus globulus'), sets the \code{download_reason} to 'testing' (see \code{?ala_reasons}), and returns only the species, the longitude, and the latitude of all observations.
 #' @param species The full scientific species name, quoted.
 #' @param ala_args Optionally, a list of arguments passed to \code{occurrences} (ALA4R package).
 #' @param gbif_args Optionally, a list of arguments passed to \code{occ_search} (rgbif package).
