@@ -1,10 +1,10 @@
-# speciesmap : species occurrences and long-term climate
+# speciesmap : climate observations at species occurrences
 
 [![](http://www.r-pkg.org/badges/version/speciesmap)]()
 
-This R package obtains species records from GBIF or ALA, and retrieves climate variables at species locations from WorldClim, and optionally, potential evapotranspiration (PET) from CGIAR-CSI.
-
-Use this package if you want to estimate broad climate occupancy by species, as defined by for example MAP and MAT across the range where the species occur.
+This R package obtains species records from the Global Biodiversity Information Facility ([GBIF](http://www.gbif.org/)) or the Atlas of Living Australia ([ALA](ala.org.au)), and retrieves climate variables at species locations from [WorldClim](www.worldclim.org), and optionally, potential evapotranspiration (PET) from the [CGIAR-CSI aridity database](http://www.cgiar-csi.org/data/global-aridity-and-pet-database).
+ 
+Use this package if you want to estimate broad climate occupancy by species, as defined by for example mean annual precipitation and mean annual temperature across the range where the species occurs.
 
 The main use of the package is the function `climate_presence`, which takes the following steps. Step 3 is optional but was the main reason to write this package.
 

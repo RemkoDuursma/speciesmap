@@ -18,6 +18,8 @@ RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/RemkoDuursma/speciesmap
+BugReports: https://github.com/RemkoDuursma/speciesmap/issues
 Authors@R: 
     c(person(given = "Remko",
              family = "Duursma",
