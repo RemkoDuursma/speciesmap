@@ -13,3 +13,9 @@ The main use of the package is the function `climate_presence`, which takes the 
 3. Rasterizes species occurrences to the same resolution as WorldClim (only the coarsest resolution is supported at the moment; 10min or ca. 18km2). This step is taken to reduce sampling bias - avoids the overweighting of species occurrences where they are sampled more often. The idea is that, in order to estimate broad climate occupancy, we need to find areas where species can occur, and not weigh areas more where they occur in higher densities or have been sampled more intensively.
 4. Return all climate variables, monthly or annually. It is also possible to aggregate the climate variables by species, applying a set of user-defined functions (for example, mean and quantiles of MAP across the species range).
 
+
+To install the speciesmap package from github, use the following command. The package is not yet available on CRAN.
+
+```
+devtools::install_github("remkoduursma/speciesmap")
+```

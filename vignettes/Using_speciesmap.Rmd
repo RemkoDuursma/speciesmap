@@ -10,6 +10,16 @@ vignette: >
 ---
 
 
+## Installation
+
+To install the speciesmap package from github, use the following command. The package is not yet available on CRAN.
+
+```{r, eval=FALSE}
+devtools::install_github("remkoduursma/speciesmap")
+```
+
+Note the message on loading the package. When using `speciesmap`, please cite the original data sources!
+
 ```{r}
 library(speciesmap)
 ```
@@ -61,13 +71,7 @@ benthoccras <- rasterize_occurrences(benthocc)
 data(benthoccras)
 ```
 
-The resulting object looks just like before, but has fewer rows:
-
-```{r}
-knitr::kable(benthoccras)
-```
-
-In this case, this rare species of Eucalyptus occurs in only thirteen 10min cells.
+The resulting object looks just like before, but has fewer rows. In this case, this rare species of Eucalyptus occurs in only thirteen 10min cells.
 
 
 ## Climate at species occurrences
@@ -97,26 +101,76 @@ data(benthclim)
 
 ```
 
-The output is monthly, in wide format (shown below is an excerpt):
+The output is monthly, in wide format (shown below are only the first few columns and first few rows), with the exception of PET, which is only provided as an annual value.
 
 ```{r echo=FALSE}
-knitr::kable(benthclim[,1:8])
+knitr::kable(benthclim[1:6,1:8])
 ```
 
+The monthly values can be reshaped, using a combination of `melt` (from `reshape2`), `separate` and `spread` (both from `tidyr`):
+
+```{r, include=FALSE}
+library(tidyr)
+library(reshape2)
+```
+
+```{r}
+library(tidyr)
+library(reshape2)
+benthlong <- benthclim %>%
+  dplyr::select(-PET) %>%
+  melt(id.vars=c("species","longitude","latitude")) %>%
+  separate("variable", c("variable","month")) %>% 
+  spread(variable, value)
+
+head(benthlong)
+```
+
+Long format may be useful to make a plot of average temperature vs. Month for all locations.
+
+```{r, include=FALSE}
+library(ggplot2)
+```
+
+```{r}
+library(ggplot2)
+ggplot(benthlong, aes(x=as.numeric(as.character(month)), y=tavg, group=interaction(latitude, longitude))) +
+  geom_line() + 
+  theme_minimal() + 
+  labs(x="Month", y="Average temperature (deg C)") + 
+  scale_x_continuous(breaks=1:12)
+```
+
+Using the long format, it is straightforward to make any sort of summary variable by location that you want. Alternatively, you can use the built-in `annualize_clim`, like so:
+```{r, include=FALSE}
+library(magrittr)
+```
 
 ```{r, eval=FALSE}
+# Only first 6 rows shown.
+# annualize_clim renames tavg into MAT (mean annual temperature), 
+# and prec into MAP (mean annual precipitation)
 library(magrittr)
 benthclim %>% annualize_clim
 ```
 ```{r, echo=FALSE}
 library(magrittr)
-knitr::kable(benthclim %>% annualize_clim)
+benthclim %>% annualize_clim %>% head
 ```
 
-```{r, eval=FALSE}
+The above result gives annual values for each recorded location of the species. The final step is to summarize these climate variables across the entire range of the species. Once again you can produce summaries yourself, or use the built-in function `aggregate_clim`, which applies functions to each climate column. The default is to calculate the mean and 5%, 95% quantiles:
+
+```{r, eval=TRUE}
 benthclim %>% annualize_clim %>% aggregate_clim
 ```
-```{r, echo=FALSE}
-knitr::kable(benthclim %>% annualize_clim %>% aggregate_clim)
+
+The result shown is for a single species, but if multiple species were present in the search, one row per species is shown.
+
+Finally, you can also provide custom functions (note that function names have to be quoted).
+
+```{r, eval=TRUE}
+benthclim %>% annualize_clim %>% aggregate_clim(., funs=c("min", "median", "max") )
 ```
+
+
 
