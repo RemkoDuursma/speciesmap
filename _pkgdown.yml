@@ -1,3 +1,8 @@
 template:
   params:
     bootswatch: cosmo
+
+authors:
+  Remko Duursma:
+    href: http://www.remkoduursma.com
+  Daisy Duursma:
