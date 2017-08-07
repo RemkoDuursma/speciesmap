@@ -1,6 +1,6 @@
 # speciesmap : climate observations at species occurrences
 
-[![](http://www.r-pkg.org/badges/version/speciesmap)]()
+[![Travis-CI Build Status](https://travis-ci.org/RemkoDuursma/speciesmap.svg?branch=master)](https://travis-ci.org/RemkoDuursma/speciesmap) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/speciesmap)](https://cran.r-project.org/package=speciesmap)
 
 This R package obtains species records from the Global Biodiversity Information Facility ([GBIF](http://www.gbif.org/)) or the Atlas of Living Australia ([ALA](ala.org.au)), and retrieves climate variables at species locations from [WorldClim](www.worldclim.org), and optionally, potential evapotranspiration (PET) from the [CGIAR-CSI aridity database](http://www.cgiar-csi.org/data/global-aridity-and-pet-database).
  

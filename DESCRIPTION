@@ -8,7 +8,8 @@ Imports:
     ALA4R,
     rgbif,
     raster,
-    futile.logger
+    futile.logger,
+	doBy
 Maintainer: Remko Duursma <remkoduursma@gmail.com>
 Description: Retrieve species occurrences from GBIF or ALA, and retrieve climate
     variables at the occurrences from WorldClim and the CGIAR-CSI aridity database. 
