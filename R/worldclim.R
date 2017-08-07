@@ -1,6 +1,7 @@
 #' Download Worldclim rasters
 #' @description Downloads and unzips 10min resolution Worldlclim rasters, stores them for reuse.
-#' @details Zip files are downloaded from \url{http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base}
+#' @details Zip files are downloaded from \url{http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base}. This function is normally not invoked by the user, since \code{\link{climate_presence}} as well as \code{\link{get_climate_vars}} download the rasters as needed. The path to download the rasters to is read from \code{options()$worldclimpath}.
+#' @param wc_vars The WorldClim variables to be downloaded, e.g. 'tavg', 'prec' (see \code{\link{get_climate_vars}}).
 #' @author Remko Duursma
 #' @export
 #' @importFrom raster raster
@@ -246,8 +247,10 @@ annualize_clim <- function(cl){
 #' @param species Latin binomial for species, can be a vector.
 #' @param database Either 'ALA' or 'GBIF'
 #' @param vars Vector of climate variables to be extracted; see Details.
+#' @param output Either 'monthly' (default), returning monthly climate data, or 'annual', in which case \code{\link{annualize_clim}} will be run on the result.
 #' @param rasterize If TRUE, the default, resamples species occurrences into same spatial scale as Worldclim data.
-#' @param return If summary (the default), returns summary variables of precip and temp, one row per species. For 'all' returns climate variables (and monthly ones) for all locations; result is a list if species is a vector.
+#' @param ala_args Further arguments passed to \code{occurrences} from the \code{ALA4R} package (named list).
+#' @param gbif_args Further arguments passed to \code{occ_search} from the \code{rgbif} package (named list).
 #' @details The climate variables are any of the Worldclim 2.0 variables, including "tmin","tmax","tavg","prec","srad","wind","vapr". Also allowed is 'pet', which will be extracted from the Zomer PET database (see \code{\link{get_zomer_pet}}).
 #' @author Remko Duursma
 #' @export

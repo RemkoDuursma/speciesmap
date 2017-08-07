@@ -15,9 +15,13 @@ climate_presence(species, database = c("ALA", "GBIF", "both"), vars = NULL,
 
 \item{vars}{Vector of climate variables to be extracted; see Details.}
 
+\item{output}{Either 'monthly' (default), returning monthly climate data, or 'annual', in which case \code{\link{annualize_clim}} will be run on the result.}
+
 \item{rasterize}{If TRUE, the default, resamples species occurrences into same spatial scale as Worldclim data.}
 
-\item{return}{If summary (the default), returns summary variables of precip and temp, one row per species. For 'all' returns climate variables (and monthly ones) for all locations; result is a list if species is a vector.}
+\item{ala_args}{Further arguments passed to \code{occurrences} from the \code{ALA4R} package (named list).}
+
+\item{gbif_args}{Further arguments passed to \code{occ_search} from the \code{rgbif} package (named list).}
 }
 \description{
 Simple interface to download species occurrences, and extract climate observations from Worldclim for where the species is present.
