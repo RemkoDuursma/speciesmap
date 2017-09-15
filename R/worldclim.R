@@ -84,7 +84,7 @@ return(ras)
 #' @description Given a dataframe with longitude and latitude coordinates, extracts rainfall and temperature data from Worldclim. Rasters are downloaded if not provided.
 #' @param data Dataframe with columns \code{latitude} and \code{longitude}.
 #' @param vars Vector of climate variables to be extracted; see Details.
-#' @param output Either 'monthly' (default), or 'annual', in which case the \code{annualize} function is executed on the result. Alternatively you can generate monthly output, and use \code{annualize_clim} yourself (see Examples).
+#' @param output Either 'monthly' (default), or 'annual', in which case the \code{annualize_clim} function is executed on the result. Alternatively you can generate monthly output, and use \code{annualize_clim} yourself (see Examples).
 #' @param cl Output of \code{get_climate_vars}.
 #' @param funs For \code{aggregate_clim}, a character vector of functions to be applied to each column.
 #' @param probs For \code{aggregate_clim}, if 'quantile' is one of the functions, the probabilities to be calculated (see \code{\link{quantile}})
@@ -106,7 +106,7 @@ return(ras)
 #'
 #' # By default all monthly values are returned, use annualize to get annual
 #' # averages (or total in case of MAP):
-#' annualize(res)
+#' annualize_clim(res)
 #'
 #' # ... or simply use output="annual"
 #' res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33),
