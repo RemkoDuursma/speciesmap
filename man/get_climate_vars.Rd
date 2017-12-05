@@ -17,7 +17,7 @@ annualize_clim(cl)
 
 \item{vars}{Vector of climate variables to be extracted; see Details.}
 
-\item{output}{Either 'monthly' (default), or 'annual', in which case the \code{annualize} function is executed on the result. Alternatively you can generate monthly output, and use \code{annualize_clim} yourself (see Examples).}
+\item{output}{Either 'monthly' (default), or 'annual', in which case the \code{annualize_clim} function is executed on the result. Alternatively you can generate monthly output, and use \code{annualize_clim} yourself (see Examples).}
 
 \item{cl}{Output of \code{get_climate_vars}.}
 
@@ -45,7 +45,7 @@ res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33), vars=c("pe
 
 # By default all monthly values are returned, use annualize to get annual
 # averages (or total in case of MAP):
-annualize(res)
+annualize_clim(res)
 
 # ... or simply use output="annual"
 res <- get_climate_vars(data=data.frame(longitude=150, latitude=-33),

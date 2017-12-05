@@ -9,9 +9,9 @@
 #' @examples
 #' # Return worldclim tmean and prec rasters, as a list with those components
 #' \dontrun{
-#' wc <- get_worldclim_rasters(wc_vars=c("tavg","tmin"))
+#' wc <- download_worldclim_rasters(wc_vars=c("tavg","tmin"))
 #' }
-get_worldclim_rasters <- function(wc_vars="tavg"){
+download_worldclim_rasters <- function(wc_vars="tavg"){
 
   download_worldclim <- function(wc_var, topath){
 
@@ -47,13 +47,13 @@ wc_url <- function(wc_var){
 
 
 
-wc_tif_fns <- function(wc_var, topath){
+wc_tif_fns <- function(wc_var, topath, wcreso){
   if(wc_var == "bio"){
     # 19 bioclimatic variables
-    file.path(topath, sprintf("wc2.0_%s_10m_%02d.tif", wc_var, 1:19))
+    file.path(topath, sprintf("wc2.0_%s_%s_%02d.tif", wc_var, wcreso, 1:19))
   } else {
     # monthly variables
-    file.path(topath, sprintf("wc2.0_10m_%s_%02d.tif", wc_var, 1:12))
+    file.path(topath, sprintf("wc2.0_%s_%s_%02d.tif", wcreso, wc_var, 1:12))
   }
 
 }
@@ -63,10 +63,11 @@ wc_tif_fns <- function(wc_var, topath){
 read_worldclim_raster <- function(wc_var){
 
   wcpath <- getOption("worldclimpath", default=getwd())
+  wcreso <- getOption("worldclimresolution", default="10min")
 
-  wc_tifs <- wc_tif_fns(wc_var, wcpath)
+  wc_tifs <- wc_tif_fns(wc_var, wcpath, wcreso)
   if(!all(file.exists(wc_tifs))){
-    get_worldclim_rasters(wc_var)
+    download_worldclim_rasters(wc_var)
   }
 
   # Read the rasters into a list

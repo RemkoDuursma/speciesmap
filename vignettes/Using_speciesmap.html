@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Remko Duursma" />
+
+<meta name="date" content="2017-12-05" />
+
+<title>An introduction to speciesmap</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">An introduction to speciesmap</h1>
+<h4 class="author"><em>Remko Duursma</em></h4>
+<h4 class="date"><em>2017-12-05</em></h4>
+
+
+
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>To install the speciesmap package from github, use the following command. The package is not yet available on CRAN.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;remkoduursma/speciesmap&quot;</span>)</code></pre></div>
+<p>Note the message on loading the package. When using <code>speciesmap</code>, please cite the original data sources!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(speciesmap)</code></pre></div>
+</div>
+<div id="species-occurrences" class="section level2">
+<h2>Species occurrences</h2>
+<p>If you are only interested in extracting species occurrences, <code>speciesmap</code> provides thin wrappers around <code>rgbif</code> and <code>ALA4R</code> packages. The output is harmonized and simplified, returning a dataframe with species, latitude and longitude for all occurrences returned by the database. Some checking on the output is also performed, as well as useful error messages when either data service is unresponsive. If no records are found a dataframe with the species, and a single NA for latitude and longitude is returned.</p>
+<p>To extract occurrences from the ALA,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benthocc &lt;-<span class="st"> </span><span class="kw">get_occurrences_ala</span>(<span class="st">&quot;Eucalyptus benthamii&quot;</span>) </code></pre></div>
+<p>This gives (first 6 rows shown):</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">species</th>
+<th align="right">longitude</th>
+<th align="right">latitude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.0000</td>
+<td align="right">-33.0000</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.0000</td>
+<td align="right">-33.0000</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">176.0000</td>
+<td align="right">-37.0000</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">149.1167</td>
+<td align="right">-35.2667</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.4000</td>
+<td align="right">-33.8000</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.3800</td>
+<td align="right">-33.8200</td>
+</tr>
+</tbody>
+</table>
+<p>The corresponding function for GBIF is <code>get_occurrences_gbif</code>.</p>
+<p>Both <code>get_occurrences_*</code> functions are vectorized, so you can do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benthocc &lt;-<span class="st"> </span><span class="kw">get_occurrences_ala</span>(<span class="kw">c</span>(<span class="st">&quot;Eucalyptus benthamii&quot;</span>,<span class="st">&quot;Eucalyptus globulus&quot;</span>))</code></pre></div>
+<p>for example.</p>
+</div>
+<div id="rasterizing" class="section level2">
+<h2>Rasterizing</h2>
+<p>One of the motivating factors for writing <code>speciesmap</code> is the ability to quickly rasterize occurrences into a spatial resolution that matches climate data (in particular, WorldClim). At the moment only one resolution is possible, but this issue will be removed in a future version.</p>
+<p>Rasterizing works by storing the latitude and longitude of 10min degree cells where the species has been observed at least once. The idea is to remove bias towards heavily sampled areas, since the main objective of the package is to study climate occupancy of species.</p>
+<p>We can simply do,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benthoccras &lt;-<span class="st"> </span><span class="kw">rasterize_occurrences</span>(benthocc)</code></pre></div>
+<p>The resulting object looks just like before, but has fewer rows. In this case, this rare species of Eucalyptus occurs in only thirteen 10min cells.</p>
+</div>
+<div id="climate-at-species-occurrences" class="section level2">
+<h2>Climate at species occurrences</h2>
+<p>The main function in <code>speciesmap</code> is <code>climate_presence</code>, which performs all steps at once:</p>
+<ul>
+<li>Find species occurrences from ALA, GBIF or both.</li>
+<li>Rasterize occurrences (optionally)</li>
+<li>Extract climate variables of interest from WorldClim and CGIAR-CSI (PET)</li>
+<li>Download WorldClim layers if necessary first</li>
+</ul>
+<p>It is necessary to set the path to where the WorldClim data will be downloaded. It is of course recommended you recycle this between projects. Use the <code>options</code> as below.</p>
+<p>For potential evapotranspiration, the package extracts data from the CGIAR-CSI database (Zomer et al.), which has to be manually downloaded first.</p>
+<p>To do this, visit (), and manually download the file ‘Global PET - Annual.zip’ (follow ‘Download from the HarvestChoice Dropbox’), and unzip it in some directory. Then set the path with options() as shown below.</p>
+<p>In this example we find potential evapotranspiration, average temperature, maximum temperature at the rasterized locations of <em>Eucalyptus benthamii</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="dt">worldclimpath=</span><span class="st">&quot;c:/data/worldclim&quot;</span>, 
+        <span class="dt">zomerpetpath=</span><span class="st">&quot;c:/data/zomer&quot;</span>)
+benthclim &lt;-<span class="st"> </span><span class="kw">climate_presence</span>(<span class="st">&quot;Eucalyptus benthamii&quot;</span>, <span class="dt">database=</span><span class="st">&quot;ALA&quot;</span>,
+                              <span class="dt">vars=</span><span class="kw">c</span>(<span class="st">&quot;pet&quot;</span>,<span class="st">&quot;tavg&quot;</span>,<span class="st">&quot;tmax&quot;</span>))</code></pre></div>
+<p>The output is monthly, in wide format (shown below are only the first few columns and first few rows), with the exception of PET, which is only provided as an annual value.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">species</th>
+<th align="right">longitude</th>
+<th align="right">latitude</th>
+<th align="right">tavg_1</th>
+<th align="right">tavg_2</th>
+<th align="right">tavg_3</th>
+<th align="right">tavg_4</th>
+<th align="right">tavg_5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.0833</td>
+<td align="right">-33.08333</td>
+<td align="right">21.55500</td>
+<td align="right">21.07525</td>
+<td align="right">18.70675</td>
+<td align="right">14.78325</td>
+<td align="right">11.50100</td>
+</tr>
+<tr class="even">
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.7500</td>
+<td align="right">-33.58333</td>
+<td align="right">22.96700</td>
+<td align="right">22.70400</td>
+<td align="right">20.97100</td>
+<td align="right">17.70400</td>
+<td align="right">14.49050</td>
+</tr>
+<tr class="odd">
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.4167</td>
+<td align="right">-33.75000</td>
+<td align="right">19.63175</td>
+<td align="right">19.43775</td>
+<td align="right">17.60500</td>
+<td align="right">14.30125</td>
+<td align="right">11.47475</td>
+</tr>
+<tr class="even">
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.5833</td>
+<td align="right">-33.75000</td>
+<td align="right">21.49150</td>
+<td align="right">21.37075</td>
+<td align="right">19.54650</td>
+<td align="right">16.40525</td>
+<td align="right">13.59300</td>
+</tr>
+<tr class="odd">
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.4167</td>
+<td align="right">-33.91667</td>
+<td align="right">20.79825</td>
+<td align="right">20.70950</td>
+<td align="right">18.82900</td>
+<td align="right">15.46750</td>
+<td align="right">12.73600</td>
+</tr>
+<tr class="even">
+<td align="left">Eucalyptus benthamii</td>
+<td align="right">150.5833</td>
+<td align="right">-33.91667</td>
+<td align="right">21.57100</td>
+<td align="right">21.47425</td>
+<td align="right">19.65025</td>
+<td align="right">16.52100</td>
+<td align="right">13.69700</td>
+</tr>
+</tbody>
+</table>
+<p>The monthly values can be reshaped, using a combination of <code>melt</code> (from <code>reshape2</code>), <code>separate</code> and <code>spread</code> (both from <code>tidyr</code>):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyr)
+<span class="kw">library</span>(reshape2)
+benthlong &lt;-<span class="st"> </span>benthclim <span class="op">%&gt;%</span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>PET) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">melt</span>(<span class="dt">id.vars=</span><span class="kw">c</span>(<span class="st">&quot;species&quot;</span>,<span class="st">&quot;longitude&quot;</span>,<span class="st">&quot;latitude&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">separate</span>(<span class="st">&quot;variable&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;variable&quot;</span>,<span class="st">&quot;month&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">spread</span>(variable, value)
+
+<span class="kw">head</span>(benthlong)</code></pre></div>
+<pre><code>##                species longitude latitude month     tavg     tmax
+## 1 Eucalyptus benthamii  149.0833   -35.25     1 20.31100 25.77875
+## 2 Eucalyptus benthamii  149.0833   -35.25    10 12.74300 19.59350
+## 3 Eucalyptus benthamii  149.0833   -35.25    11 15.44475 22.29775
+## 4 Eucalyptus benthamii  149.0833   -35.25    12 18.64375 25.49450
+## 5 Eucalyptus benthamii  149.0833   -35.25     2 20.20525 25.67675
+## 6 Eucalyptus benthamii  149.0833   -35.25     3 17.86575 23.33700</code></pre>
+<p>Long format may be useful to make a plot of average temperature vs. Month for all locations.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(benthlong, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(month)), <span class="dt">y=</span>tavg, <span class="dt">group=</span><span class="kw">interaction</span>(latitude, longitude))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;Month&quot;</span>, <span class="dt">y=</span><span class="st">&quot;Average temperature (deg C)&quot;</span>) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks=</span><span class="dv">1</span><span class="op">:</span><span class="dv">12</span>)</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAA3lBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6AGY6OpA6kNtNTU1NTW5NTY5NbqtNjshmAABmADpmAGZmOpBmZmZmtrZmtttmtv9uTU1uTW5uTY5ubo5ubqtuq8huq+SOTU2OTW6OTY6Obk2ObquOyP+QOgCQOjqQOmaQkGaQtpCQ2/+rbk2rbm6rbo6rjk2ryKur5OSr5P+2ZgC2Zjq2Zma22/+2///Ijk3I///bkDrbtmbb/7bb///kq27k///r6+v/tmb/trb/yI7/25D/27b/5Kv//7b//8j//9v//+T////JJzyNAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAVzklEQVR4nO2dDZvcNhGARZsULqWEtnAplKaFC5QmBXJA06NNfeS4u9z8/z/E2tJ8SbIl25LtvXieNnG0u7L07mg0M5K1BnYZFLN2A7YuO6CE7IASsgNKyA4oITughEwB1AQXaxZVvtEOKFG0A0oU7YASRTugRNEOKFG0A0oU7YASRTugRNEOKFG0A0oUzQJkDrJEI48WUHthOtkBSYlUbDHVauQ9AGSveMiVbeTRAmIeXLEJ3vXOAWqkWAukSpp7ITMAhZiNUqWFJ7btaVC8Ymeld0Dqw74fZP9tSjfyaAG1F74fRIR2QLJi4QchoR1QWLGF5AgdJaDQSSkerBKhYwQUCZnKR/Om917HD+jCmpITGJbEvYxVoSMEFFN7BnTzGMlcmJ99AwOSupcBnuxLtHsbgG4+/o4+qf8RSMa9DHBUdjSATHEjbUj0vYz9MnyXevuAShtpQ640o8JaTRO41BsHZFJG+ubxKcDbZ+//CAnx1EWxaZgQ1n4kgEzKSF89POn+Pn9vyP7oDzss4i8DSIiCjmMCNGSDzh/4F30yrEHsB/ku9aYBmZQN6gZYJ5cpFeq7l9MgJIT/7YDElRhkjfHH9ZYBuQE2AOjtsxN3dZEy04P3IkI4zZt7AggunOIwqT4ZBgSOUBO41BsGhBZ6CBCcdwHGzePkPJ+4l+F7GeWdbhdQaC9jgA4T/WF8DIdh3oejnrQz1A3eoPJKUDFA8Sxf0YwiJsw6Qo2r3mwfELtA1QD5XwbNmMr92j6gBTKKzu4QFbN9QKYhPssAsoRwZLUXNZfKZldhgAEtMMTIhWYd2j4gUqBl8kHG2WbEws71zK5UAURTfBrQzWPsL4Wr108ePToDuH366KOf4vcynthK0VR37zoCQMgnMcQ6Z/rm8cnbZ47Q7Zcv4fqzl3fPz+D1r4buxQuHRKgRMUfvJLo+IHZEwsyoe53ExauHYBXj1TctlVdnt199D9e/+z55e6VCDcccRwIoEYvFALVy0KLrz3/qlMl9lsQfXs4eta9024SMcbuF6GJzYrCtDTbdSQwQDTEZ0N89/wLefCQBDX8/qEPGGij7rZg+R35tDbLBNBvO1DR/2WI8hQsOyG6ffnEw1Z/nA0LTbGhecKZ8Zld6i+YCck6/ETt3oBdQINdPDnMY5NogsICczyVnBtPz/awMyGbSWcdHO4qWTzfMhmcxWeSpkHAxtggIjYCFlQJ0cRhgMqH4+lErZ31+EC+EqYpV+t4IUFsDxGkyp0ApG3T+/g+PT8kJ6hVdi7eqYYuArZHR1qhY7wpUIQA5cz0M6DDNtzP9zFUNrLXBylmFNgaI02SYyKoMqLugtEEDgQptC5Bh00Op4cQQu2iHWOsHDUtiFgPAqcGNNW2uJ3SlCiCZ5QCTB8j6QSeQkAxAwClX4TtuD5D46hbLKCKhBuvndlTZMjSxCgOcBmpo72lKg/IkdXsyQ+DGWqBC6wNSY9+QAg0A4mSQmWWkqVIjxppvhVYHxNGXs0CyQL09FqyewrDkfj/uDg0EKrQ2IC8YIgXKzgfBoOSOcOEGeSq0BUC4g0kp0KKAeJBRNB9EJusAcnE7DTDtm+i3x4bYCQxL7iTKesMe0RYAIZ8GnAJxRjE1zbt8UEKyWmQIUEMqRPPZqoDQNrrBxrsGefNXL6A8yWuR1BvA6GMDgHi+crOHWFVdyA9yVwILUDTvpRZXAoSRqeFtBMZZo9jbOym70x4cF1reQBO4OiC3f9u4FhpOuVJ8pD7IGnTwFJ31mfusBl4RFtwkbBti1gRk8IsDO/ZpWQFMxix2bj3pExiW7BYZ9C0cofUB2QgMvTGnQFazQTVsCRsESEgB0qnFFQARH7bQVsfXAIRwKC8F6wKyExXxcYkgstYrAOqGGKuQa1jRncFjFZr8INPgFN/QZL88IMzWcbyxHiA1viwq3krgOWiLAoJQhabVNQ+QIR/INoJjC/YWVwCE+TqtQhPrmgsIyFm2/iEHi7H1PftGkOIvHMZlZA/4u1IZkEl1zQCEA6yhNonm9G/x0n5Q1sLh+B0m7b4SY/fD4E6TMptXRrXC/WcbYP/lWtNEdufEABVZF4sUGXQ4vK0fU+oKi/Leb8gGNQC4joGNGdqHuwwg15yh9H11QBRgIB+Z5uxvjhpiRRYOI0WoQg2niBYGxCtf0Gg+owAVWTiMFKGZbiiaD9P3lQGJh7ApBU3meuhpkvrTfKfTLrUJIHz7iXVNeb+REQavYwJNZ/11SUBvnyWzrVN60ICY6b3c61KABARewyBAQ16HZ6QhRyZ0SswaLmheEpCEwHzYXOcCSj+tOqkH9ouisa5yrwsB4hUvXsKYAAhXn0tP8/Y+hpcyUbkn1jXt3uAu3dwFPJ8Nxs7LGGk002iFnFJNrGv0vXl/JGYS3JfjGrQJQCp4xqJFAFFalYa38MY4POupa6kh1qkQJhyEO10fEKVVhSqhR+TyH+M06ObX3wRlWiYC4mcPRUS2ACDKFVJenlJCLj80cohdzjp5obcorkLVAXEyVSag7e1hIqAqQ0yaadHE+oAoV0iOBSpQ1gE+EUDndTTIqZCM5ovsDB5+PydTyXeniX40IGekk2cvzAIERjayPiD0oQ1bHvwL+YzVoKRMBWToaBj9VNmEunJfZMfQS/eicz0KUMEdZvF7Nbzjvz+1WBYQKZDxFAgyj6FbFhBaIZFanFhX3osxPt1r6B+OAXRB24DHPe2TX2TICjUQqFBtQLaIB5YR89lIDUrKZLvhUh4ymq8KiPb203SJoQa5Rsm6FjTSQoUakPHQpLryALHhcSMLB5adKjLqUoC6E5YqxWJgWyQByQm/BiBlgUhx5AaqjLokoLfPTt4+Oy2x076vyAhfiJOv0+pKvmjYInOwCso1yqjLt0HnJ7ViMQgAQWVABnRehVZ7cODl1OUDunhQb5oH2qhET0nwfFYckOHUJQWr3V2x03lOqrJB5x2deecoDhc5FaLJpSYgSv6QwekUaOSh8gpQe4TiuReLdQcKtI+H/zLzYIHhIuO+WBms6tRiIUDokVIQjwNM77RP1pWa5t90YF6dybJigKAqILQ8MlhlAzQFUGTh8NWHfz9o0N2Ll7JwLiCOgoS3WBgQ5REpWMXgnS30aEDRCb4dYrdPu/MX8LPz9ukYt1WINurgn0UFtyDRAT36vJ70r3zFAEUXDltA15+9lFo0R4PE6k93e1KhshpEeUSVHZPrP7k30hoUWdWgU1/YDs0DhDkaGaxWAKSjeFr6ngUoKqUBUUDmqVBRQGH2x1D63jYi+0ZZgNoTqO6+LTLNCxWSydeygPz0oQNE6z9+GigfUGSXK/pBH/JENg+QVqHGT3sUAaSmdhfE8/LGdECTjscZXWToG3axmHNQJlYfvijSQHRHoBCwoU5PmearbOL0igwmpzH5QONtUvUxQGSheVDTTtbtA1JWqIFAheYCCtOHYIQLTbHYhCFWa5er3wNgK9QApWkmVt8LSKbJ1MEq0wHV2uXq90A8Z9O4nkzfGey/SCv+LoBxCsSAxn0TyWk+InMBWYNgXPIBsCuFAck0mYhRxxq7lQCBnOpdn4Ls9CRAhhQH02T2XpEeTwDUrY2VOXlhsIitkNy2WAiQvcI0HCqQ+HJGNVob6XJnd6QAkeMvMmd+dnoKIMqvyjyi3Ig0B1DtpWcfkDA9hncSzAVkr8iXRgvEE8S4Rq8DqCEV4uSr6N2outSLpDicFsN1AiyYM8Qu23T0EkMMH/9j0yNM9jxArn6nQA1NYW6KG93oWD4otbhaABBZIQJEZ6HMAeRlOcR+kiKAcqUYIGl6RIA/rq4IIApW9Y9VedVvG5CYyCjvASCtxQRAgQKpnzvzR/AEQNU3L4gLqy9ip2m4a3ksII7iaTyxE10CUDoTNKLiMYAwMQQUgY+oSwLCvxkQBRlo7OYZ6cobqFSRxSE2c8sAf0RddCUGGBocQ5s4iwCq98RhrMipEFqhBlCFZgKiJXmQCgRTf1lZ+0HJ36DNrzhdpFWooYlsIiCRJkNAgk8ZQEsaaQeIT+QFUqFxdXmAOMvhATL9VeQPsRPIkUKAtArZL53c6fy6sDKRJnOAjJEPfBcAtKyRZivEWOz2s3Fd0YA4y+EBGol9A0ZauD/2AkBmQLLrYsVpUActIDnAygCCq58vaaTB0TA6MTR24ysbtIa0jx6vZgWa2uhYsJow0gX3qOBGFSP+lbE1JVKT3E3TuLNv5KE3o6uMAcqVYhrk8kFGJ4ZGbnzFOb0bWBSEcbKAbjSt0esDckOhITuNVyMA+WkyWSvfaFKjNaAqR3QN3h5nd70rz0stpgG5vihAAsv4EDgOaJnNCxAAwlUHRwhoyOTUBeQjiywHWuiygJZam/cB6cQQH0w5EhD5T+r3FbHaIwXEw4oSQ6xCuYACBRLeFd2kyBBbaPNCAEglhoD2E44DJLJAereUN15nGellNi+EvTP4ywTYO202hgGRAjEgUwtQnpQHpKxQgyqUV5feDESjlD0Fz2eYZ4Pavxa1Qbyy6ucWMwHpZwkxd3LvAInEENBP1ufUhSNRpMmEArVFfmA3GVD9p557irhP7utHO52ui7wBmSYD+qmVsoCWzwe5K98KYYc5tdhXFzvcXh5x6n67LRppshHaW8SEzuAHjb4SP9FzrwC5adjPLXaAhsYHv2ioChBTPBfNaeF2ANEgo9yi/TXyvg8K9QrSZPz+ewHIhQKoQvonmPs2fIjFD5kFsqoX6d49AIQqhD41RvrR1Wg5xak0mUoDFQe0eD7IXRm01iJ1xguBkcVW6UWqNBkoF7PAzy8oQMvngxQgMAoQtc0Y35KIQM2IzUBugEEtQGukOzQgyiN3hMR+HzWdSbNkOFiVdp6L5rZwG4BkRCUAsRts2OeR+dhu9wYzJk+hEqA18kEeIM9bFC6g/xy8G5I0nhCQcAtMiRZqI71CPgjbgX1CN9gAJ4ac4tgZTkZZPNjQahlRawVAeVITkN50JjwicEEWuYfKi/R8aGJ2fwCxqaVfPWWDw6dl83ymDbcz6ip0Lw+I90kPT/RVAelNZyDCM9lcvTVKxLdcq45RChlp9zBLwhWqCYhzi0Jvgv0MxijfyAFVzGoA4oyimOm7x8Jvnz766KfZ9xouIhXyAckJ3811RruAGJpIf1Ja6zktTAHqjse5e34Gr381+15ZgLypnlupsofKw3F86gPi58UoHrPH49x+9T0fUVELkLJC1sLKKQtoYlNP7wADUpGpHpIzWhjxg07hQhxC1Z3+8vlPcPslHr0wevNOptDeHvFzVnqDjztax4SfM43aDTRli5EncUARwbM7GFAtDRIzPYecXoRhwB88uF1GmyVpree1MAuQ1qDagOg3K51Fpnf5nrR7tbFMA7NUpoUKUGyf9PViNogBAeU9XBNpdvdSqBio4Sa1oFdlAUVP4mzB3D3/ov4sBjx4jAIEfRlCkYo22m5XAhQ9iXMxPwgEIM572EbGOiymONwoS+8v2EIfUOWTOBNF6P0akzS60kmSYX1XUgnQAidxJooIUMqv4TS1MeIHIbBPtQDFTuKMSD1AnPxRERgbHPcuYbdxiMESgDJlGUAq5SpfE2GocQ63co1M0RbqWWyVzQvyQkAQx5jyi6RKwqjrLJBOA5U30jlSERD7h9Rv0WGVUXRtF2XVAVX8Cb/sIsP9pKPg4n6QwRBfT3E6DVRag7IeZqkKCIwAhOMpNm1zQkRtkvGyHPfOSIspyIjuB46iOE5He5H3HxBnWumUTghTrlTkLdz7aaDSgNbavAARQPL5lkaphlAqFYLVB7Ta5gXoAySGEadcgTxp3yIHEUlpI73a2nxgfvnCLagC+UGcBfINThjT3m9A4rRsVKLGJRsh+oPjtQGtuHlBFQURmBhnpDeRFIhKFpVqjjbS621e6AFE4ZZtrDgoOkJjAUB5UhuQNxdZG8Rxh00XhVUU2E52nIBk2OrmLhPZGlVit1TSSJ9AjlQH5PvDwB4juPTqKoC651kyAvrlAYmHpmgW86owlZrjD7Hzer+zOgsQK1HsRVgO0EHOV/aDGogrSbAFT71YqzkRDUoeQ7USIAgXDhPvLw4oZ3yVvX1vUY9GRFydBQFtIeUKw4AiRT02q1RzYn7Qv5Y6HmdIxuxfKf/jUgPbX24er5tyHT0rQcHdUmkNyvKEtgYoyALVs0EZjzyXvf1AUa5nvBigi24KOz8+QD0zf6Eiqt1NYdsBlBudl9zKMahBl535OTpARXcqJGzQ22dbskF5CTBTuzneLHa5mVkMcgD1PRJdD1CnRpvwg9oLE8xP+l3Fl1FzAB3kv1sBlFgILL9KmAkoJQsCGlKSCquERwio38zUWAQ7RkB9E1WVNZ7jBBR1deqs8RwpoMgqaqUljGMFFMSjtTL0xwtITenabu+A7JX3jPwOKCxyelMzfXjcgIB2Ui1572MCNLAuVq/oqAD1r4vVKzoyQJGiHVCiaAeUKNoBJYp2QImiTQB6/ehRe8jJIi06SkCvzuS/dkC+3L14Kf+5A/Ll9ulhiJESVdhrskEZBej6s5e+Fr0zkj+LaTv0zsgOKCFZgNoDlu6+/T79xnso2X7Qh++mCZrkSb9TsgNKyA4oITughMwBJM59cwVPhMNt5Y2MclHakz2V6GDYvcefF9o3BfUfbunXHxZFjhlzbZdd6K6DLswA9MZvR3uSYOt0e00Tx8M5ee13M+JjHYreiA7hPb2i9pavddnt0zOvKHLcqmu77EJ3HXZhOiB7iqlqfXv/sK+hov3+j/pNkTCmPZkwFHGYo6uqPeFRv9U79DF63Kpru+yCvQ67UHSIxboAgQbdvfiHN8R0MGzr/vxvEdcrUMaIBgWAoodl9g2xoAuFAbUnLnpveuL38/UXvg2KBMPXT866PimJ0NeWxZYcxtKHASDvuNV+QF4XygK6ferzgaBbh24HRroVPTYjehBaIIv2jW+Snzz6w4vJGuR3ofAsFg1oddftZBSC1O+6/VME0KvgU55e0Kc9sxQet9o/i3ldKAkowifeAV+DYsHwq3CIRWx5RIM6s6RtVeS41R5AYRdKAoo5KtEwN+YH+e86GBffwYmoSutn+Z88FHlDMd8PCruwe9IJ2QElZAeUkB1QQnZACdkBJWQHlJAdUEK2B+jqYfdA383jyIGX//s3XH3wzaLN2SKg7oCVq4choBbODujq4acnh78uPt0BxeXq4W8++RHe/vnrA6D2OewHLZi/PjTmtP1dlJOrD77OO0iskGwR0G//8h1c/eI/7//YHivb/t8Nt4v3vus0yF0v1ZwtAjq9OIXLk8v3f+wOTT38cSjqxpcFZK+Xas4mAV0+gPPTFlBrhhwYAuSul2rOJgHdfPLDx9/tgHqkHUP//PpB+xNDl+2Ef2ltzw4IpQV0YbrfYCIj7aC0J9TsgFpALYBLOc1/Y/84Nw92QBuTHVBCdkAJ2QElZAeUkB1QQnZACfk/T5g+P6K0HP0AAAAASUVORK5CYII=" /><!-- --></p>
+<p>Using the long format, it is straightforward to make any sort of summary variable by location that you want. Alternatively, you can use the built-in <code>annualize_clim</code>, like so:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Only first 6 rows shown.</span>
+<span class="co"># annualize_clim renames tavg into MAT (mean annual temperature), </span>
+<span class="co"># and prec into MAP (mean annual precipitation)</span>
+<span class="kw">library</span>(magrittr)
+benthclim <span class="op">%&gt;%</span><span class="st"> </span>annualize_clim</code></pre></div>
+<pre><code>##                species longitude  latitude      MAT     tmax  PET
+## 1 Eucalyptus benthamii  150.0833 -33.08333 14.75913 20.28431 1224
+## 2 Eucalyptus benthamii  150.7500 -33.58333 17.19596 23.33217 1366
+## 3 Eucalyptus benthamii  150.4167 -33.75000 14.03294 18.90269 1147
+## 4 Eucalyptus benthamii  150.5833 -33.75000 15.99740 21.48617 1300
+## 5 Eucalyptus benthamii  150.4167 -33.91667 15.19390 20.17383 1213
+## 6 Eucalyptus benthamii  150.5833 -33.91667 16.09660 21.70408 1307</code></pre>
+<p>The above result gives annual values for each recorded location of the species. The final step is to summarize these climate variables across the entire range of the species. Once again you can produce summaries yourself, or use the built-in function <code>aggregate_clim</code>, which applies functions to each climate column. The default is to calculate the mean and 5%, 95% quantiles:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benthclim <span class="op">%&gt;%</span><span class="st"> </span>annualize_clim <span class="op">%&gt;%</span><span class="st"> </span>aggregate_clim</code></pre></div>
+<pre><code>##                species ncells MAT_mean MAT_q05  MAT_q95 PET_mean PET_q05
+## 1 Eucalyptus benthamii     13 15.42152 13.6772 17.06512 1263.583  1164.6
+##   PET_q95 tmax_mean tmax_q05 tmax_q95
+## 1 1340.15  20.93329 19.08966 23.19164</code></pre>
+<p>The result shown is for a single species, but if multiple species were present in the search, one row per species is shown.</p>
+<p>Finally, you can also provide custom functions (note that function names have to be quoted).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benthclim <span class="op">%&gt;%</span><span class="st"> </span>annualize_clim <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">aggregate_clim</span>(., <span class="dt">funs=</span><span class="kw">c</span>(<span class="st">&quot;min&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;max&quot;</span>) )</code></pre></div>
+<pre><code>##                species ncells  MAT_max MAT_median  MAT_min PET_max
+## 1 Eucalyptus benthamii     13 17.19596   15.52423 13.24242    1366
+##   PET_median PET_min tmax_max tmax_median tmax_min
+## 1     1285.5    1147 23.33217    20.88524 18.90269</code></pre>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
