@@ -29,7 +29,7 @@ get_worldclim_rasters <- function(wc_vars="tavg"){
 
   }
 
-  wcpath <- get_wcpath()
+  wcpath <- getOption("worldclimpath", default=getwd())
 
   for(i in seq_along(wc_vars)){
     download_worldclim(wc_vars[i], wcpath)
@@ -39,8 +39,13 @@ get_worldclim_rasters <- function(wc_vars="tavg"){
 }
 
 wc_url <- function(wc_var){
-  sprintf("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_%s.zip",wc_var)
+  sprintf("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_%s_%s.zip",
+          getOption("worldclimresolution", default="10m"),
+          wc_var)
 }
+
+
+
 
 wc_tif_fns <- function(wc_var, topath){
   if(wc_var == "bio"){
@@ -54,18 +59,10 @@ wc_tif_fns <- function(wc_var, topath){
 }
 
 
-get_wcpath <- function(){
-  wcpath <- options()$worldclimpath
-  if(is.null(wcpath)){
-    stop("Set path for WorldClim rasters first, e.g. options(worldclimpath = 'c:/worldclim')")
-  }
-  return(wcpath)
-}
-
 
 read_worldclim_raster <- function(wc_var){
 
-  wcpath <- get_wcpath()
+  wcpath <- getOption("worldclimpath", default=getwd())
 
   wc_tifs <- wc_tif_fns(wc_var, wcpath)
   if(!all(file.exists(wc_tifs))){

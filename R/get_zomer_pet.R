@@ -16,18 +16,27 @@ get_zomer_pet <- function(data){
     return(cbind(data, PET=NA))
   }
 
-  petpath <- options()$zomerpetpath
+  petpath <- getOption("zomerpetpath")
   if(is.null(petpath)){
-    stop("Set path to downloaded PET database first, e.g. options(zomerpetpath = 'c:/zomerpet')")
+    stop("Set path to downloaded PET database first,", 
+         "e.g. options(zomerpetpath = 'c:/zomerpet').","
+         See ?get_zomer_pet.", call.=FALSE)
   }
-
-  r <- raster(file.path(petpath, "PET_he_annual/pet_he_yr"))
-
+  
+  pet_filen <- file.path(petpath, "PET_he_annual/pet_he_yr")
+  if(!file.exists(pet_filen)){
+    stop(sprintf("File %s not found, did you download the PET file and unzip?", 
+                 pet_filen), call.=FALSE)
+  }
+  
+  # Read the raster, convert to SpatialPointsDataframe.
+  r <- raster(pet_filen)
   here <- data.frame(lon=data$longitude,lat=data$latitude)
   coordinates(here) <- c("lon", "lat")
   proj4string(here) <- CRS("+proj=longlat +datum=WGS84")
   coors <- SpatialPoints(here)
 
+  # Extract PET at input coordinates.
   pet <- extract(r, coors)
 
   flog.info("Extracted %s records from CGIAR-CSI rasters.", nrow(data))
