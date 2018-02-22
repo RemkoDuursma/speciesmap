@@ -59,7 +59,7 @@ get_wcpath <- function(){
   if(is.null(wcpath)){
     stop("Set path for WorldClim rasters first, e.g. options(worldclimpath = 'c:/worldclim')")
   }
-  return(wcpath)
+  return(invisible(wcpath))
 }
 
 
@@ -261,10 +261,10 @@ climate_presence <- function(species, database=c("ALA","GBIF", "both"),
                              ala_args=NULL,
                              gbif_args=NULL){
 
-  database <- match.arg(database)
-
-  l <- list()
-
+  
+  # First check whether worldclim path is set
+  get_wcpath()
+  
   for(i in seq_along(species)){
 
     if(database == "GBIF"){

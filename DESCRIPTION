@@ -1,7 +1,7 @@
 Package: speciesmap
 Type: Package
 Title: Species Occurrences And Climate Observations
-Version: 0.4
+Version: 0.4-2
 Depends: R (>= 2.10)
 Imports:
     sp,
@@ -23,7 +23,8 @@ Suggests: knitr,
     tidyr,
     reshape2,
     magrittr,
-    dplyr
+    dplyr,
+    rgdal
 VignetteBuilder: knitr
 URL: https://github.com/RemkoDuursma/speciesmap
 BugReports: https://github.com/RemkoDuursma/speciesmap/issues
