@@ -1,7 +1,7 @@
 Package: speciesmap
 Type: Package
 Title: Species Occurrences And Climate Observations
-Version: 0.4-2
+Version: 0.4-3
 Depends: R (>= 2.10)
 Imports:
     sp,

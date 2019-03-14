@@ -15,7 +15,7 @@ vignette: >
 To install the speciesmap package from github, use the following command. The package is not yet available on CRAN.
 
 ```{r, eval=FALSE}
-devtools::install_github("remkoduursma/speciesmap")
+remotes::install_github("remkoduursma/speciesmap")
 ```
 
 Note the message on loading the package. When using `speciesmap`, please cite the original data sources!
@@ -93,8 +93,9 @@ In this example we find potential evapotranspiration, average temperature, maxim
 ```{r eval=FALSE}
 options(worldclimpath="c:/data/worldclim", 
         zomerpetpath="c:/data/zomer")
-benthclim <- climate_presence("Eucalyptus benthamii", database="ALA",
+benthclim <- climate_presence("Eucalyptus benthamii", database="GBIF",
                               vars=c("pet","tavg","tmax"))
+
 ```
 ```{r, echo=FALSE}
 data(benthclim)
@@ -134,7 +135,8 @@ library(ggplot2)
 
 ```{r}
 library(ggplot2)
-ggplot(benthlong, aes(x=as.numeric(as.character(month)), y=tavg, group=interaction(latitude, longitude))) +
+ggplot(benthlong, aes(x=as.numeric(as.character(month)), y=tavg, 
+                      group=interaction(latitude, longitude))) +
   geom_line() + 
   theme_minimal() + 
   labs(x="Month", y="Average temperature (deg C)") + 

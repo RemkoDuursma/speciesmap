@@ -254,17 +254,21 @@ annualize_clim <- function(cl){
 #' @details The climate variables are any of the Worldclim 2.0 variables, including "tmin","tmax","tavg","prec","srad","wind","vapr". Also allowed is 'pet', which will be extracted from the Zomer PET database (see \code{\link{get_zomer_pet}}).
 #' @author Remko Duursma
 #' @export
-climate_presence <- function(species, database=c("ALA","GBIF", "both"),
-                             vars=NULL,
-                             output=c("monthly","annual"),
-                             rasterize=TRUE,
-                             ala_args=NULL,
-                             gbif_args=NULL){
+climate_presence <- function(species, 
+                             database = c("ALA","GBIF", "both"),
+                             vars = NULL,
+                             output = c("monthly","annual"),
+                             rasterize = TRUE,
+                             ala_args = NULL,
+                             gbif_args = NULL){
 
+  
+  database <- match.arg(database)
   
   # First check whether worldclim path is set
   get_wcpath()
   
+  l <- vector("list", length=length(species))
   for(i in seq_along(species)){
 
     if(database == "GBIF"){
