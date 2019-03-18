@@ -39,7 +39,9 @@ get_occurrences_ala <- function(species, ala_args=NULL){
   }
   
   time1 <- system.time({
-    spdat <- do.call(occurrences, c(list(taxon=species, download_reason_id=7), ala_args))
+    spdat <- do.call(ALA4R::occurrences, 
+                     c(list(taxon=species, download_reason_id=7),
+                       ala_args))
   })
   
   if(nrow(spdat$data) == 0 || all(spdat$data$longitude == "")){
@@ -79,9 +81,9 @@ get_occurrences_gbif <- function(species, gbif_args=NULL){
   }
   
   time1 <- system.time({
-    spdat <- try(do.call(occ_search, c(list(scientificName=species,
+    spdat <- try(do.call(rgbif::occ_search, c(list(scientificName=species,
                                            limit=50000,
-                                           fields =c('name','decimalLatitude','decimalLongitude'),
+                                           fields =c('scientificName','decimalLatitude','decimalLongitude'),
                                            hasGeospatialIssue=FALSE,
                                            return="data"), gbif_args)))
   })
@@ -93,9 +95,9 @@ get_occurrences_gbif <- function(species, gbif_args=NULL){
 
   # If GBIF does not like the name, it returns the name it likes instead.
   if(identical(names(spdat), "name")){
-    time1 <- system.time(spdat <- occ_search(scientificName=spdat$name[1],
+    time1 <- system.time(spdat <- rgbif::occ_search(scientificName=spdat$name[1],
                                              limit=50000,
-                                             fields =c('name','decimalLatitude','decimalLongitude'),
+                                             fields =c('scientificName','decimalLatitude','decimalLongitude'),
                                              hasGeospatialIssue=FALSE,
                                              return="data"))
   }
@@ -108,9 +110,9 @@ get_occurrences_gbif <- function(species, gbif_args=NULL){
   }
   
   # Sometimes GBIF returns the records for the new species name, silently switching species.
-  if(unique(spdat$name) != species){
-    flog.info("GBIF prefers new name %s for %s", unique(spdat$name), species)
-    spdat$name <- species
+  if(unique(spdat$scientificName) != species){
+    flog.info("GBIF prefers new name %s for %s", unique(spdat$scientificName), species)
+    spdat$scientificName <- species
   }
 
   # remove obs with no lats and longs
